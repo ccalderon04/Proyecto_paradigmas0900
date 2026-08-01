@@ -61,6 +61,10 @@ def generar_factura_desde_carrito(datos: FacturaGenerar, db: Session = Depends(g
 
     return factura
 
+@router.get("/", response_model=list[FacturaRespuesta])
+def listar_facturas(db: Session = Depends(get_db)):
+    """Lista todas las facturas — usado por facturas.php para el panel de ventas."""
+    return db.query(Factura).all()
 
 @router.get("/cliente/{id_cliente}", response_model=list[FacturaRespuesta])
 def listar_facturas_de_cliente(id_cliente: uuid.UUID, db: Session = Depends(get_db)):

@@ -17,4 +17,6 @@ class Categoria(Base):
     )
     nombre: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
 
-    productos: Mapped[list["Producto"]] = relationship(back_populates="categoria")
+    productos: Mapped[list["Producto"]] = relationship(
+    back_populates="categoria", passive_deletes=True
+)

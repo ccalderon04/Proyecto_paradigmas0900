@@ -31,8 +31,9 @@ class Usuario(Base):
     estado: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     # Relación 1:1 con cliente (composición: si el usuario es rol='cliente')
-    cliente: Mapped["Cliente"] = relationship(back_populates="usuario", uselist=False)
-
+    cliente: Mapped["Cliente"] = relationship(
+    back_populates="usuario", uselist=False, passive_deletes=True
+)
     def es_admin(self) -> bool:
         """Encapsula la regla de negocio 'qué significa ser admin' en un solo lugar."""
         return self.rol == "admin"

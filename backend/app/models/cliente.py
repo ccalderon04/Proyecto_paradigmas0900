@@ -49,8 +49,9 @@ class Cliente(Base):
     genero: Mapped[str | None] = mapped_column(String(20), nullable=True)
 
     usuario: Mapped["Usuario"] = relationship(back_populates="cliente") # type: ignore
-    direcciones: Mapped[list["Direccion"]] = relationship(back_populates="cliente") # type: ignore
-
+    direcciones: Mapped[list["Direccion"]] = relationship(
+    back_populates="cliente", passive_deletes=True
+)
     def nombre_completo(self) -> str:
         """Compone el nombre completo a partir de las partes almacenadas."""
         partes = [self.p_nombre, self.s_nombre, self.p_apellido, self.s_apellido]
