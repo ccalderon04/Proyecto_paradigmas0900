@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../core/ApiClient.php';
 
-/** Servicio de autenticación: solo habla con /auth/*, no hereda de BaseService porque no es CRUD. */
+/** Servicio de autenticación: habla con POST /usuarios/login. */
 class AuthService
 {
     private ApiClient $api;
@@ -11,10 +11,10 @@ class AuthService
         $this->api = $api;
     }
 
-    public function login(string $identificador, string $contrasena): array
+    public function login(string $nombre, string $contrasena): array
     {
-        return $this->api->post('/auth/login', [
-            'identificador' => $identificador,
+        return $this->api->post('/usuarios/login', [
+            'nombre' => $nombre,
             'contrasena' => $contrasena,
         ]);
     }
