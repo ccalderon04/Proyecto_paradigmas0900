@@ -11,6 +11,7 @@ import { obtenerCategorias } from "@/lib/categoriasApi";
 import { useCarrito } from "@/context/carritocontext";
 import { Producto, Categoria } from "@/types";
 import { ArrowRight, ShoppingCart } from "lucide-react";
+import { formatMoney } from "@/lib/format";
 
 export default function Home() {
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -76,7 +77,7 @@ export default function Home() {
                 </div>
               </Link>
               <div className="flex items-center justify-between p-4">
-                <span className="font-bold text-primary">${producto.precio.toFixed(2)}</span>
+                <span className="font-bold text-primary">L. cd{formatMoney(producto.precio)}</span>
                 <button
                   onClick={() => agregarProducto(producto)}
                   className="bg-primary p-2 rounded-lg hover:bg-primary/90 transition-colors"

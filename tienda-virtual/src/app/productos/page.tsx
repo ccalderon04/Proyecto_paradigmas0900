@@ -1,3 +1,4 @@
+// src/app/productos/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,6 +9,7 @@ import Footer from "@/components/Footer";
 import { obtenerProductos, obtenerProductosPorCategoria } from "@/lib/productosApi";
 import { obtenerCategorias } from "@/lib/categoriasApi";
 import { useCarrito } from "@/context/carritocontext";
+import { formatMoney } from "@/lib/format";
 import { Producto, Categoria } from "@/types";
 import { ShoppingCart } from "lucide-react";
 
@@ -17,9 +19,7 @@ export default function ProductosPage() {
 
     const [productos, setProductos] = useState<Producto[]>([]);
     const [categorias, setCategorias] = useState<Categoria[]>([]);
-    const [categoriaActiva, setCategoriaActiva] = useState<number | null>(
-        categoriaInicial ? Number(categoriaInicial) : null
-    );
+    const [categoriaActiva, setCategoriaActiva] = useState<string | null>(categoriaInicial);
     const [cargando, setCargando] = useState(true);
     const { agregarProducto } = useCarrito();
 
@@ -89,7 +89,6 @@ export default function ProductosPage() {
                 </p>
 
                 {cargando && <p className="text-neutral-light">Cargando productos...</p>}
-
                 {!cargando && productos.length === 0 && (
                     <p className="text-neutral-light">No hay productos en esta categoría.</p>
                 )}
@@ -107,7 +106,7 @@ export default function ProductosPage() {
                                 </div>
                             </Link>
                             <div className="flex items-center justify-between p-4">
-                                <span className="font-bold text-primary">${producto.precio.toFixed(2)}</span>
+                                <span className="font-bold text-primary">${formatMoney(producto.precio)}</span>
                                 <button
                                     onClick={() => agregarProducto(producto)}
                                     className="bg-primary p-2 rounded-lg hover:bg-primary/90 transition-colors"

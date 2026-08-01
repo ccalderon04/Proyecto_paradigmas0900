@@ -10,9 +10,10 @@ import { registrarCliente } from "@/lib/authApi";
 export default function RegistroPage() {
     const router = useRouter();
 
-    const [nombre, setNombre] = useState("");
-    const [apellido, setApellido] = useState("");
+    const [pNombre, setPNombre] = useState("");
+    const [pApellido, setPApellido] = useState("");
     const [correo, setCorreo] = useState("");
+    const [nombreUsuario, setNombreUsuario] = useState("");
     const [contrasena, setContrasena] = useState("");
     const [error, setError] = useState("");
     const [enviando, setEnviando] = useState(false);
@@ -29,16 +30,17 @@ export default function RegistroPage() {
         setEnviando(true);
         try {
             const cliente = await registrarCliente({
-            nombre,
-            p_apellido: apellido,
+            p_nombre: pNombre,
+            p_apellido: pApellido,
             correo,
+            nombre_usuario: nombreUsuario,
             contrasena,
             });
 
             localStorage.setItem("cliente", JSON.stringify(cliente));
             router.push("/");
         } catch (err) {
-            setError("No se pudo crear la cuenta. Verifica tus datos o intenta con otro correo.");
+            setError("No se pudo crear la cuenta. El usuario o correo ya podrían estar registrados.");
         } finally {
             setEnviando(false);
         }
@@ -55,8 +57,8 @@ export default function RegistroPage() {
                     <label className="text-sm font-label block mb-1">Nombre</label>
                     <input
                         type="text"
-                        value={nombre}
-                        onChange={(e) => setNombre(e.target.value)}
+                        value={pNombre}
+                        onChange={(e) => setPNombre(e.target.value)}
                         placeholder="Ej. Alex"
                         className="w-full bg-secondary rounded-lg px-4 py-3 text-white placeholder:text-neutral-light outline-none"
                         required
@@ -67,8 +69,8 @@ export default function RegistroPage() {
                     <label className="text-sm font-label block mb-1">Apellido</label>
                     <input
                         type="text"
-                        value={apellido}
-                        onChange={(e) => setApellido(e.target.value)}
+                        value={pApellido}
+                        onChange={(e) => setPApellido(e.target.value)}
                         placeholder="Ej. Rivera"
                         className="w-full bg-secondary rounded-lg px-4 py-3 text-white placeholder:text-neutral-light outline-none"
                         required
@@ -82,6 +84,18 @@ export default function RegistroPage() {
                         value={correo}
                         onChange={(e) => setCorreo(e.target.value)}
                         placeholder="tu@email.com"
+                        className="w-full bg-secondary rounded-lg px-4 py-3 text-white placeholder:text-neutral-light outline-none"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label className="text-sm font-label block mb-1">Nombre de usuario</label>
+                    <input
+                        type="text"
+                        value={nombreUsuario}
+                        onChange={(e) => setNombreUsuario(e.target.value)}
+                        placeholder="tu_usuario"
                         className="w-full bg-secondary rounded-lg px-4 py-3 text-white placeholder:text-neutral-light outline-none"
                         required
                     />

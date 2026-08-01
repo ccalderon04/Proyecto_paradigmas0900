@@ -9,6 +9,7 @@ import { obtenerProductos } from "@/lib/productosApi";
 import { useCarrito } from "@/context/carritocontext";
 import { Producto } from "@/types";
 import { ShoppingCart } from "lucide-react";
+import { formatMoney } from "@/lib/format";
 
 export default function OfertasPage() {
     const [productos, setProductos] = useState<Producto[]>([]);
@@ -52,7 +53,7 @@ export default function OfertasPage() {
                             </div>
                         </Link>
                         <div className="flex items-center justify-between p-4">
-                            <span className="font-bold text-primary">${producto.precio.toFixed(2)}</span>
+                            <span className="font-bold text-primary">L. {formatMoney(producto.precio)}</span>
                             <button
                                 onClick={() => agregarProducto(producto)}
                                 className="bg-primary p-2 rounded-lg hover:bg-primary/90 transition-colors"

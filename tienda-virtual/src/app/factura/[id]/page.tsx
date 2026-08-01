@@ -8,12 +8,13 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Button from "@/components/Button";
 import { obtenerFacturaPorId } from "@/lib/facturaApi";
+import { formatMoney } from "@/lib/format";
 import { Factura } from "@/types";
 import { CheckCircle2 } from "lucide-react";
 
 export default function FacturaPage() {
     const params = useParams();
-    const id = Number(params.id);
+    const id = params.id as string;
 
     const [factura, setFactura] = useState<Factura | null>(null);
     const [cargando, setCargando] = useState(true);
@@ -58,9 +59,7 @@ export default function FacturaPage() {
                 <div className="flex flex-col items-center text-center mb-6">
                     <CheckCircle2 className="text-tertiary mb-3" size={48} />
                     <h1 className="font-headline text-2xl font-bold">¡Compra Exitosa!</h1>
-                    <p className="text-neutral-light text-sm mt-1">
-                        Factura #{factura.id_factura}
-                    </p>
+                    <p className="text-neutral-light text-sm mt-1">Factura #{factura.id_factura}</p>
                 </div>
 
                 <div className="border-t border-white/10 pt-4 flex flex-col gap-2 text-sm">
@@ -70,15 +69,15 @@ export default function FacturaPage() {
                     </div>
                     <div className="flex justify-between text-neutral-light">
                         <span>Subtotal</span>
-                        <span>${factura.subtotal.toFixed(2)}</span>
+                        <span>${formatMoney(factura.subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-neutral-light">
                         <span>Impuestos</span>
-                        <span>${factura.impuestos.toFixed(2)}</span>
+                        <span>${formatMoney(factura.impuestos)}</span>
                     </div>
                     <div className="flex justify-between font-bold text-lg border-t border-white/10 pt-3 mt-2">
                         <span>Total</span>
-                        <span className="text-primary">${factura.total.toFixed(2)}</span>
+                        <span className="text-primary">${formatMoney(factura.total)}</span>
                     </div>
                 </div>
 

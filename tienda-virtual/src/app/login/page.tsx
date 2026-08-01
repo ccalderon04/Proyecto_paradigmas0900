@@ -5,11 +5,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
-import { loginCliente } from "@/lib/authApi";
+import { loginUsuario, obtenerClientePorUsuario } from "@/lib/authApi";
 
 export default function LoginPage() {
     const router = useRouter();
-    const [correo, setCorreo] = useState("");
+    const [nombreUsuario, setNombreUsuario] = useState("");
     const [contrasena, setContrasena] = useState("");
     const [error, setError] = useState("");
     const [enviando, setEnviando] = useState(false);
@@ -20,11 +20,18 @@ export default function LoginPage() {
         setEnviando(true);
 
         try {
-            const cliente = await loginCliente({ correo, contrasena });
+            const usuario = await loginUsuario({ nombre: nombreUsuario, contrasena });
+            const cliente = await obtenerClientePorUsuario(usuario.id_usuario);
+
+            if (!cliente) {
+            setError("Este usuario no tiene un perfil de cliente asociado.");
+            return;
+            }
+
             localStorage.setItem("cliente", JSON.stringify(cliente));
             router.push("/");
         } catch (err) {
-            setError("Correo o contraseña incorrectos");
+            setError("Usuario o contraseña incorrectos");
         } finally {
             setEnviando(false);
         }
@@ -38,12 +45,12 @@ export default function LoginPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="text-sm font-label block mb-1">Correo electrónico</label>
+                    <label className="text-sm font-label block mb-1">Nombre de usuario</label>
                     <input
-                        type="email"
-                        value={correo}
-                        onChange={(e) => setCorreo(e.target.value)}
-                        placeholder="tu@email.com"
+                        type="text"
+                        value={nombreUsuario}
+                        onChange={(e) => setNombreUsuario(e.target.value)}
+                        placeholder="tu_usuario"
                         className="w-full bg-secondary rounded-lg px-4 py-3 text-white placeholder:text-neutral-light outline-none"
                         required
                     />
