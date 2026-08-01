@@ -66,7 +66,6 @@ export default function DetalleProductoPage() {
             <Navbar />
             <section className="bg-white px-8 py-10">
             <div className="grid grid-cols-2 gap-10">
-                {/* Imagen */}
                 <div className="bg-secondary rounded-2xl h-[420px]" />
 
                 <div>

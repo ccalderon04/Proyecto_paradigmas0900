@@ -1,32 +1,32 @@
+// src/app/login/page.tsx
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
+import { loginCliente } from "@/lib/authApi";
 
 export default function LoginPage() {
+    const router = useRouter();
     const [correo, setCorreo] = useState("");
     const [contrasena, setContrasena] = useState("");
     const [error, setError] = useState("");
+    const [enviando, setEnviando] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+        setEnviando(true);
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ correo, contrasena }),
-            });
-
-            if (!res.ok) throw new Error("Credenciales inválidas");
-
-            const data = await res.json();
-            localStorage.setItem("cliente", JSON.stringify(data));
-            window.location.href = "/";
+            const cliente = await loginCliente({ correo, contrasena });
+            localStorage.setItem("cliente", JSON.stringify(cliente));
+            router.push("/");
         } catch (err) {
             setError("Correo o contraseña incorrectos");
+        } finally {
+            setEnviando(false);
         }
     };
 
@@ -64,7 +64,7 @@ export default function LoginPage() {
                 {error && <p className="text-primary text-sm">{error}</p>}
 
                 <Button type="submit" variant="primary" className="w-full">
-                    Iniciar Sesión
+                    {enviando ? "Ingresando..." : "Iniciar Sesión"}
                 </Button>
             </form>
 

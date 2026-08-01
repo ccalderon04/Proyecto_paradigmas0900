@@ -2,11 +2,24 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ShoppingCart, User } from "lucide-react";
 import { useCarrito } from "@/context/carritocontext";
 
 export default function Navbar() {
   const { cantidadTotal } = useCarrito();
+  const pathname = usePathname();
+
+  const links = [
+    { href: "/", label: "Inicio" },
+    { href: "/productos", label: "Tienda" },
+    { href: "/ofertas", label: "Ofertas" },
+  ];
+
+  const esActivo = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
   return (
     <header className="bg-neutral text-white px-8 py-4 flex items-center justify-between">
@@ -14,9 +27,17 @@ export default function Navbar() {
         ELITE SUPPS
       </Link>
       <nav className="flex gap-6 font-label text-sm">
-        <Link href="/" className="hover:text-primary transition-colors">Inicio</Link>
-        <Link href="/productos" className="hover:text-primary transition-colors">Tienda</Link>
-        <Link href="/ofertas" className="hover:text-primary transition-colors">Ofertas</Link>
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={`transition-colors ${
+              esActivo(link.href) ? "text-primary" : "hover:text-primary"
+            }`}
+          >
+            {link.label}
+          </Link>
+        ))}
       </nav>
       <div className="flex gap-5 items-center">
         <Link href="/carrito" className="relative">
