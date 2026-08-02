@@ -104,3 +104,34 @@ export interface ProductoDescuento {
   fecha_fin: string;
   activo: boolean;
 }
+
+export interface Departamento {
+  id_departamento: string;
+  nombre: string;
+}
+
+export interface Ciudad {
+  id_ciudad: string;
+  nombre: string;
+}
+
+export interface Direccion {
+  id_direccion: string;
+  id_cliente: string;
+  id_departamento: string;
+  id_ciudad: string;
+  calle: string;
+  colonia: string;
+  lat: string | null;
+  long: string | null;
+}
+
+export interface Tarjeta {
+  id_tarjeta: string;
+  id_cliente: string;
+  titular: string;
+  ultimos_digitos: string;
+  marca: "Visa" | "Mastercard" | "Amex";
+  fecha_expiracion: string;
+  estado: boolean;
+}

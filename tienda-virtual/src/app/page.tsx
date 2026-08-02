@@ -11,6 +11,7 @@ import { useCarrito } from "@/context/carritocontext";
 import { Producto, Categoria } from "@/types";
 import { ArrowRight, ShoppingCart } from "lucide-react";
 import { formatMoney } from "@/lib/format";
+import { tieneOfertaActiva, precioConDescuento, porcentajeDescuento } from "@/lib/pricing";
 
 export default function Home() {
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -64,7 +65,13 @@ export default function Home() {
           {productos.map((producto) => (
             <div key={producto.id_producto} className="bg-secondary rounded-xl overflow-hidden text-white">
               <Link href={`/productos/${producto.id_producto}`}>
-                <div className="h-40 bg-neutral" />
+                <div className="h-40 bg-neutral relative">
+                  {tieneOfertaActiva(producto) && (
+                    <span className="absolute top-2 left-2 bg-tertiary text-white text-xs font-label px-2 py-1 rounded-full">
+                      {porcentajeDescuento(producto)}% de descuento
+                    </span>
+                  )}
+                </div>
                 <div className="p-4 pb-0">
                   <h3 className="font-headline font-bold">{producto.nombre}</h3>
                   <p className="text-neutral-light text-sm mt-1 line-clamp-2">
@@ -73,7 +80,18 @@ export default function Home() {
                 </div>
               </Link>
               <div className="flex items-center justify-between p-4">
-                <span className="font-bold text-primary">{formatMoney(producto.precio)}</span>
+                {tieneOfertaActiva(producto) ? (
+                  <div className="flex flex-col">
+                    <span className="text-neutral-light text-xs line-through">
+                      {formatMoney(producto.precio)}
+                    </span>
+                    <span className="font-bold text-primary">
+                      {formatMoney(precioConDescuento(producto))}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="font-bold text-primary">{formatMoney(producto.precio)}</span>
+                )}
                 <button
                   onClick={() => agregarProducto(producto)}
                   className="bg-primary p-2 rounded-lg hover:bg-primary/90 transition-colors"
