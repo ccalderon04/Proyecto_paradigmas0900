@@ -5,6 +5,7 @@ from decimal import Decimal
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
+    Column,
     DateTime,
     ForeignKey,
     Integer,
@@ -33,6 +34,9 @@ class Factura(Base):
     id_cliente: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("cliente.id_cliente"), nullable=False
     )
+    id_direccion: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("direccion.id_direccion"), nullable=True
+    )
     fecha: Mapped[datetime] = mapped_column(DateTime, nullable=False, server_default=func.now())
     subtotal: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     impuestos: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
@@ -43,6 +47,7 @@ class Factura(Base):
     estado: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     cliente: Mapped["Cliente"] = relationship()
+    direccion: Mapped["Direccion | None"] = relationship()          # <-- NUEVO aquí
     metodo_pago: Mapped["MetodoPago"] = relationship()
     detalles: Mapped[list["DetalleFactura"]] = relationship(
         back_populates="factura", cascade="all, delete-orphan"

@@ -5,12 +5,20 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.core.database import get_db
 from app.models.carrito import Carrito
+from app.models.direccion import Direccion
 from app.models.factura import Factura
 from app.models.producto import StockInsuficienteError
 from app.schemas.factura import FacturaGenerar, FacturaRespuesta
 from app.services.facturacion_service import CarritoVacioError, generar_factura
 
 router = APIRouter(prefix="/facturas", tags=["Facturas"])
+
+CARGA_COMPLETA = (
+    joinedload(Factura.cliente),
+    joinedload(Factura.direccion).joinedload(Direccion.departamento),
+    joinedload(Factura.direccion).joinedload(Direccion.ciudad),
+    joinedload(Factura.detalles),
+)
 
 
 @router.post("/", response_model=FacturaRespuesta, status_code=status.HTTP_201_CREATED)
@@ -33,6 +41,7 @@ def generar_factura_desde_carrito(datos: FacturaGenerar, db: Session = Depends(g
             db=db,
             carrito=carrito,
             id_metodo_pago=datos.id_metodo_pago,
+            id_direccion=datos.id_direccion,
             descuentos_por_producto=datos.descuentos_por_producto,
         )
     except CarritoVacioError:
@@ -46,22 +55,33 @@ def generar_factura_desde_carrito(datos: FacturaGenerar, db: Session = Depends(g
             ),
         )
 
+    db.refresh(factura)
+    factura = (
+        db.query(Factura).options(*CARGA_COMPLETA).filter(Factura.id_factura == factura.id_factura).first()
+    )
     return factura
+
 
 @router.get("/", response_model=list[FacturaRespuesta])
 def listar_facturas(db: Session = Depends(get_db)):
-    return db.query(Factura).all()
+    return db.query(Factura).options(*CARGA_COMPLETA).all()
+
 
 @router.get("/cliente/{id_cliente}", response_model=list[FacturaRespuesta])
 def listar_facturas_de_cliente(id_cliente: uuid.UUID, db: Session = Depends(get_db)):
-    return db.query(Factura).filter(Factura.id_cliente == id_cliente).all()
+    return (
+        db.query(Factura)
+        .options(*CARGA_COMPLETA)
+        .filter(Factura.id_cliente == id_cliente)
+        .all()
+    )
 
 
 @router.get("/{id_factura}", response_model=FacturaRespuesta)
 def obtener_detalle_factura(id_factura: uuid.UUID, db: Session = Depends(get_db)):
     factura = (
         db.query(Factura)
-        .options(joinedload(Factura.detalles))
+        .options(*CARGA_COMPLETA)
         .filter(Factura.id_factura == id_factura)
         .first()
     )

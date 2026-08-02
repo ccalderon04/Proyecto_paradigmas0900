@@ -110,6 +110,7 @@ def generar_factura(
     db: Session,
     carrito: Carrito,
     id_metodo_pago: uuid.UUID,
+    id_direccion: uuid.UUID | None,
     descuentos_por_producto: dict[uuid.UUID, uuid.UUID] | None = None,
 ) -> Factura:
 
@@ -150,6 +151,7 @@ def generar_factura(
         impuestos=desglose.impuestos,
         total=desglose.total,
         id_metodo_pago=id_metodo_pago,
+        id_direccion=id_direccion,
     )
     factura.detalles = [
         DetalleFactura(

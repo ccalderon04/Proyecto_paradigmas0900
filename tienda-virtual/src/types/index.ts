@@ -81,6 +81,31 @@ export interface ProductoResumenFactura {
     precio: string;
 }
 
+export interface ClienteResumenFactura {
+    p_nombre: string;
+    s_nombre: string | null;
+    p_apellido: string;
+    s_apellido: string | null;
+}
+
+export interface DepartamentoResumenFactura {
+    id_departamento: string;
+    nombre: string;
+}
+
+export interface CiudadResumenFactura {
+    id_ciudad: string;
+    nombre: string;
+}
+
+export interface DireccionResumenFactura {
+    id_direccion: string;
+    calle: string;
+    colonia: string;
+    departamento: DepartamentoResumenFactura;
+    ciudad: CiudadResumenFactura;
+}
+
 export interface DetalleFactura {
     id_detalle: string;
     id_producto: string;
@@ -94,6 +119,9 @@ export interface DetalleFactura {
 export interface Factura {
     id_factura: string;
     id_cliente: string;
+    id_direccion: string | null;
+    cliente: ClienteResumenFactura;
+    direccion: DireccionResumenFactura | null;
     fecha: string;
     subtotal: string;
     impuestos: string;

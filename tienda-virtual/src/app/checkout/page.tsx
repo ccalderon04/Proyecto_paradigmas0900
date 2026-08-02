@@ -113,6 +113,7 @@ useEffect(() => {
     const factura = await crearFactura({
         id_carrito: carrito.id_carrito,
         id_metodo_pago: metodoSeleccionado,
+        id_direccion: entregaDomicilio ? direccionSeleccionada : null,
         descuentos_por_producto: descuentosPorProducto,
     });
 

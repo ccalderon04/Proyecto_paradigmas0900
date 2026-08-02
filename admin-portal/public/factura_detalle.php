@@ -34,6 +34,7 @@ require __DIR__ . '/../src/views/partials/sidebar.php';
 
 <div class="panel">
     <div class="form-grid">
+        <div><span class="texto-apagado">Cliente</span><br><?= htmlspecialchars($factura['cliente']['p_nombre'] . ' ' . $factura['cliente']['p_apellido']) ?></div>
         <div><span class="texto-apagado">Fecha</span><br><?= formatear_fecha($factura['fecha']) ?></div>
         <div><span class="texto-apagado">Estado</span><br>
             <span class="badge <?= $factura['estado'] ? 'badge--ok' : 'badge--off' ?>"><?= $factura['estado'] ? 'Válida' : 'Anulada' ?></span>
@@ -43,6 +44,16 @@ require __DIR__ . '/../src/views/partials/sidebar.php';
         <div><span class="texto-apagado">Total</span><br><strong style="font-size:1.2rem;"><?= formatear_moneda($factura['total']) ?></strong></div>
     </div>
 </div>
+
+<?php if ($factura['direccion']): ?>
+<div class="panel">
+    <h2>Dirección de envío</h2>
+    <p>
+        <?= htmlspecialchars($factura['direccion']['calle']) ?>, <?= htmlspecialchars($factura['direccion']['colonia']) ?><br>
+        <?= htmlspecialchars($factura['direccion']['ciudad']['nombre']) ?>, <?= htmlspecialchars($factura['direccion']['departamento']['nombre']) ?>
+    </p>
+</div>
+<?php endif; ?>
 
 <div class="panel">
     <h2>Productos facturados</h2>

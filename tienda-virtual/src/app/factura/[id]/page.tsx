@@ -67,6 +67,25 @@ export default function FacturaPage() {
                         <span>{new Date(factura.fecha).toLocaleDateString("es-HN")}</span>
                     </div>
 
+                    <div className="flex justify-between text-neutral-light">
+                        <span>Cliente</span>
+                        <span>
+                            {factura.cliente.p_nombre} {factura.cliente.p_apellido}
+                        </span>
+                    </div>
+
+                    {factura.direccion && (
+                        <div className="border-t border-white/10 pt-4 flex flex-col gap-1 mt-2">
+                            <span className="font-bold">Dirección de envío</span>
+                            <span className="text-neutral-light">
+                                {factura.direccion.calle}, {factura.direccion.colonia}
+                            </span>
+                            <span className="text-neutral-light">
+                                {factura.direccion.ciudad.nombre}, {factura.direccion.departamento.nombre}
+                            </span>
+                        </div>
+                    )}
+
                     <div className="border-t border-white/10 pt-4 flex flex-col gap-2 mt-2">
                         <div className="flex justify-between font-bold text-lg">
                             <span>Productos</span>

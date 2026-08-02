@@ -35,11 +35,12 @@ require __DIR__ . '/../src/views/partials/sidebar.php';
 
 <div class="panel">
     <table>
-        <thead><tr><th>Fecha</th><th>Subtotal</th><th>Impuestos</th><th>Total</th><th>Método de pago</th><th>Estado</th><th></th></tr></thead>
+        <thead><tr><th>Fecha</th><th>Cliente</th><th>Subtotal</th><th>Impuestos</th><th>Total</th><th>Método de pago</th><th>Estado</th><th></th></tr></thead>
         <tbody>
         <?php foreach ($facturas as $f): ?>
             <tr>
                 <td><?= formatear_fecha($f['fecha']) ?></td>
+                <td><?= htmlspecialchars($f['cliente']['p_nombre'] . ' ' . $f['cliente']['p_apellido']) ?></td>
                 <td><?= formatear_moneda($f['subtotal']) ?></td>
                 <td><?= formatear_moneda($f['impuestos']) ?></td>
                 <td><strong><?= formatear_moneda($f['total']) ?></strong></td>
@@ -49,7 +50,7 @@ require __DIR__ . '/../src/views/partials/sidebar.php';
             </tr>
         <?php endforeach; ?>
         <?php if (empty($facturas)): ?>
-            <tr><td colspan="7" class="texto-apagado">No hay facturas generadas todavía.</td></tr>
+            <tr><td colspan="8" class="texto-apagado">No hay facturas generadas todavía.</td></tr>
         <?php endif; ?>
         </tbody>
     </table>

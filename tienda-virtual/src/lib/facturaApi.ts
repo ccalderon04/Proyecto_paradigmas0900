@@ -5,6 +5,7 @@ export interface FacturaCreate {
     id_carrito: string;
     id_metodo_pago: string;
     descuentos_por_producto?: Record<string, string>;
+    id_direccion?: string | null;
 }
 
 export const crearFactura = (data: FacturaCreate) =>
