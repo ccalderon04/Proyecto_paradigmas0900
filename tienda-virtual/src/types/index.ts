@@ -125,13 +125,3 @@ export interface Direccion {
   lat: string | null;
   long: string | null;
 }
-
-export interface Tarjeta {
-  id_tarjeta: string;
-  id_cliente: string;
-  titular: string;
-  ultimos_digitos: string;
-  marca: "Visa" | "Mastercard" | "Amex";
-  fecha_expiracion: string;
-  estado: boolean;
-}
