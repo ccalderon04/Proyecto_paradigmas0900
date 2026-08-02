@@ -1,11 +1,3 @@
-"""
-Router de `/usuarios` — CRUD completo + login simple.
-
-Login: recibe nombre/contraseña, valida contra la tabla `usuario`,
-devuelve los datos básicos del usuario — sin JWT ni sesiones complejas,
-tal como pide el proyecto.
-"""
-
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -29,9 +21,6 @@ router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
 def login(datos: LoginPeticion, db: Session = Depends(get_db)):
     usuario = db.query(Usuario).filter(Usuario.nombre == datos.nombre).first()
 
-    # Mismo mensaje de error tanto si el usuario no existe como si la
-    # contraseña es incorrecta — evita que alguien pueda usar el
-    # mensaje de error para descubrir qué usuarios existen.
     credenciales_invalidas = HTTPException(
         status.HTTP_401_UNAUTHORIZED, detail="Usuario o contraseña incorrectos"
     )

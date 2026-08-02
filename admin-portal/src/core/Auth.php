@@ -1,11 +1,6 @@
 <?php
 /**
  * Encapsula el manejo de sesión del administrador.
- *
- * La validación REAL de usuario/contraseña la hace el backend
- * (POST /auth/login); esta clase solo recuerda localmente, con
- * sesiones nativas de PHP, que ya inició sesión — tal como pide
- * el proyecto: "login simple sin tokens ni sesiones complejas".
  */
 class Auth
 {

@@ -17,7 +17,6 @@ $categorias = $respCategorias['ok'] ? $respCategorias['data'] : [];
 $proveedores = $respProveedores['ok'] ? $respProveedores['data'] : [];
 $facturas = $respFacturas['ok'] ? $respFacturas['data'] : [];
 
-// --- KPIs calculados con funciones puras (helpers.php: array_map/filter/reduce) ---
 $valorInventario = calcular_valor_inventario($productos);
 $productosStockBajo = filtrar_stock_bajo($productos, 5);
 $totalVentas = calcular_total_ventas($facturas);

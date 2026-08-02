@@ -1,11 +1,6 @@
 <?php
 /**
  * Configuración central del portal.
- *
- * Carga el archivo .env (sin depender de Composer/librerías externas,
- * para que el proyecto corra con solo tener PHP instalado) y expone
- * la URL del backend en un solo lugar, tal como pide la guía
- * (Guia_Frontend_PHP.md, sección 2: "Configuración de la URL del backend").
  */
 
 function cargar_env(string $rutaEnv): void

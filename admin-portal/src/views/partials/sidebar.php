@@ -12,6 +12,7 @@ $menu = [
     'compras.php' => 'Compras',
     'inventario.php' => 'Inventario',
     'facturas.php' => 'Ventas / Facturas',
+    'clientes.php' => 'Clientes',
     'usuarios.php' => 'Usuarios',
 ];
 ?>

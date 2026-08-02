@@ -1,10 +1,5 @@
 <?php
-/**
- * Funciones auxiliares puras (mismo input -> mismo output, sin efectos
- * secundarios), usando array_map / array_filter / array_reduce / funciones
- * flecha (fn), tal como pide el proyecto para "Programación Funcional"
- * en cada lenguaje que lo permita.
- */
+
 
 function formatear_moneda(float $valor): string
 {

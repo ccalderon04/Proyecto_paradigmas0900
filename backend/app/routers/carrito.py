@@ -1,14 +1,3 @@
-"""
-Router de `/carrito`.
-
-Nota de diseño: `CarritoRespuesta.subtotal` no es una columna de la
-tabla `carrito` — es calculado por `Carrito.calcular_subtotal()` (ver
-app/models/carrito.py). Pydantic con from_attributes=True no puede
-mapear un método automáticamente como si fuera una columna, así que
-`_a_respuesta()` arma la respuesta explícitamente en vez de dejar que
-FastAPI lo intente resolver solo.
-"""
-
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status

@@ -17,6 +17,7 @@ require_once __DIR__ . '/services/CompraService.php';
 require_once __DIR__ . '/services/FacturaService.php';
 require_once __DIR__ . '/services/MetodoPagoService.php';
 require_once __DIR__ . '/services/DescuentoService.php';
+require_once __DIR__ . '/services/ClienteService.php';
 
 Auth::iniciar();
 

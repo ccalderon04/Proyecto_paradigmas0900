@@ -1,12 +1,5 @@
 <?php
-/**
- * Cliente HTTP centralizado hacia la API REST (backend FastAPI).
- *
- * Evita repetir código de conexión en cada página del portal
- * (Guia_Frontend_PHP.md, sección 1). Es una clase con encapsulamiento:
- * $baseUrl es privado y nunca se modifica desde afuera; todo el portal
- * habla con el backend únicamente a través de get()/post()/put()/delete().
- */
+
 class ApiClient
 {
     private string $baseUrl;
