@@ -8,16 +8,21 @@ export function useAuth() {
     const [cargando, setCargando] = useState(true);
 
     useEffect(() => {
-    const guardado = localStorage.getItem("cliente");
-    if (guardado) {
-        try {
-        setCliente(JSON.parse(guardado));
-        } catch {
-        localStorage.removeItem("cliente");
+        const guardado = localStorage.getItem("cliente");
+        if (guardado) {
+            try {
+                setCliente(JSON.parse(guardado));
+            } catch {
+                localStorage.removeItem("cliente");
+            }
         }
-    }
-    setCargando(false);
+        setCargando(false);
     }, []);
 
-    return { cliente, cargando };
+    const logout = () => {
+        localStorage.removeItem("cliente");
+        setCliente(null);
+    };
+
+    return { cliente, cargando, logout };
 }

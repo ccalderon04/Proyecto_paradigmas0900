@@ -6,6 +6,8 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.producto import ProductoRespuesta
+
 
 class ItemCarritoAgregar(BaseModel):
     id_producto: uuid.UUID
@@ -16,6 +18,7 @@ class DetalleCarritoRespuesta(BaseModel):
     id_detalle: uuid.UUID
     id_producto: uuid.UUID
     cantidad: int
+    producto: ProductoRespuesta
 
     model_config = ConfigDict(from_attributes=True)
 

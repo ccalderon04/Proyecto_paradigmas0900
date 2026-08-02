@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Button from "@/components/Button";
 import { obtenerProductos } from "@/lib/productosApi";
 import { obtenerCategorias } from "@/lib/categoriasApi";
 import { useCarrito } from "@/context/carritocontext";
+import { useAuth } from "@/lib/useAuth";
 import { Producto, Categoria } from "@/types";
 import { ArrowRight, ShoppingCart } from "lucide-react";
 import { formatMoney } from "@/lib/format";
@@ -17,6 +19,8 @@ export default function Home() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const { agregarProducto } = useCarrito();
+  const { cliente } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     obtenerProductos()
@@ -32,6 +36,14 @@ export default function Home() {
       .then((data) => setCategorias(data.slice(0, 3)))
       .catch((err) => console.error("Error cargando categorías:", err));
   }, []);
+
+  const handleAgregar = (producto: Producto) => {
+    if (!cliente) {
+      router.push("/login");
+      return;
+    }
+    agregarProducto(producto.id_producto);
+  };
 
   const [categoriaGrande, ...categoriasChicas] = categorias;
 
@@ -93,7 +105,7 @@ export default function Home() {
                   <span className="font-bold text-primary">{formatMoney(producto.precio)}</span>
                 )}
                 <button
-                  onClick={() => agregarProducto(producto)}
+                  onClick={() => handleAgregar(producto)}
                   className="bg-primary p-2 rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   <ShoppingCart size={16} />

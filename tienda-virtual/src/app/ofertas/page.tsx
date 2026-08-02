@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { obtenerProductos } from "@/lib/productosApi";
 import { useCarrito } from "@/context/carritocontext";
+import { useAuth } from "@/lib/useAuth";
 import { formatMoney } from "@/lib/format";
 import { tieneOfertaActiva, precioConDescuento, porcentajeDescuento } from "@/lib/pricing";
 import { Producto } from "@/types";
@@ -15,6 +17,8 @@ export default function OfertasPage() {
     const [productos, setProductos] = useState<Producto[]>([]);
     const [cargando, setCargando] = useState(true);
     const { agregarProducto } = useCarrito();
+    const { cliente } = useAuth();
+    const router = useRouter();
 
     useEffect(() => {
         obtenerProductos()
@@ -22,6 +26,14 @@ export default function OfertasPage() {
             .catch((err) => console.error("Error cargando ofertas:", err))
             .finally(() => setCargando(false));
     }, []);
+
+    const handleAgregar = (producto: Producto) => {
+        if (!cliente) {
+            router.push("/login");
+            return;
+        }
+        agregarProducto(producto.id_producto);
+    };
 
     return (
         <>
@@ -63,7 +75,7 @@ export default function OfertasPage() {
                                 </span>
                             </div>
                             <button
-                                onClick={() => agregarProducto(producto)}
+                                onClick={() => handleAgregar(producto)}
                                 className="bg-primary p-2 rounded-lg hover:bg-primary/90 transition-colors"
                             >
                                 <ShoppingCart size={16} />

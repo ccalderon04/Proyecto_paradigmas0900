@@ -21,7 +21,7 @@ import { MapPin, Plus, CreditCard } from "lucide-react";
 
 
 export default function CheckoutPage() {
-    const { items, total, vaciarCarrito } = useCarrito();
+    const { items, total, limpiarCarritoLocal } = useCarrito();
     const { cliente, cargando: cargandoAuth } = useAuth();
     const router = useRouter();
 
@@ -40,6 +40,10 @@ const [tarjetaSeleccionada, setTarjetaSeleccionada] = useState<string | null>(nu
 const metodoEsTarjeta = metodosPago
     .find((m) => m.id_metodo_pago === metodoSeleccionado)
     ?.nombre.toLowerCase().includes("tarjeta");
+
+const compraBloqueada =
+    (entregaDomicilio && !direccionSeleccionada) ||
+    (metodoEsTarjeta && !tarjetaSeleccionada);
 
 useEffect(() => {
     if (!cliente || !entregaDomicilio) return;
@@ -78,6 +82,17 @@ useEffect(() => {
 
     const handleConfirmarCompra = async () => {
     if (!cliente || !metodoSeleccionado) return;
+
+    if (entregaDomicilio && !direccionSeleccionada) {
+        setError("Debes seleccionar o agregar una dirección de entrega.");
+        return;
+    }
+
+    if (metodoEsTarjeta && !tarjetaSeleccionada) {
+        setError("Debes seleccionar o agregar una tarjeta para pagar con este método.");
+        return;
+    }
+
     setProcesando(true);
     setError("");
 
@@ -101,7 +116,7 @@ useEffect(() => {
         descuentos_por_producto: descuentosPorProducto,
     });
 
-    vaciarCarrito();
+    limpiarCarritoLocal();
     router.push(`/factura/${factura.id_factura}`);
     } catch (err) {
     const mensaje = err instanceof Error ? err.message : "Error desconocido";
@@ -271,7 +286,12 @@ useEffect(() => {
 
                     {error && <p className="text-primary text-sm mb-4">{error}</p>}
 
-                    <Button variant="primary" className="w-full" onClick={handleConfirmarCompra}>
+                    <Button
+                        variant="primary"
+                        className="w-full"
+                        onClick={handleConfirmarCompra}
+                        disabled={procesando || compraBloqueada}
+                    >
                         {procesando ? "Procesando..." : "Confirmar Compra"}
                     </Button>
                 </div>

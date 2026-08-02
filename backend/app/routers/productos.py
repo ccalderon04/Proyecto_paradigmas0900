@@ -23,15 +23,28 @@ router = APIRouter(prefix="/productos", tags=["Productos"])
 
 
 @router.get("/", response_model=list[ProductoRespuesta])
-def listar_productos(db: Session = Depends(get_db)):
-    """Lista todos los productos activos."""
-    return db.query(Producto).all()
+def listar_productos(solo_activos: bool = True, db: Session = Depends(get_db)):
+    """
+    Lista productos. Por defecto solo devuelve los activos (estado=True),
+    que es lo que necesita la tienda virtual. El portal admin puede pedir
+    ?solo_activos=false para ver también los desactivados y poder
+    reactivarlos.
+    """
+    query = db.query(Producto)
+    if solo_activos:
+        query = query.filter(Producto.estado == True)
+    return query.all()
 
 
 @router.get("/categoria/{id_categoria}", response_model=list[ProductoRespuesta])
-def filtrar_por_categoria(id_categoria: uuid.UUID, db: Session = Depends(get_db)):
+def filtrar_por_categoria(
+    id_categoria: uuid.UUID, solo_activos: bool = True, db: Session = Depends(get_db)
+):
     """Filtra productos por categoría — usado por 'Explora Categorías' en la tienda."""
-    return db.query(Producto).filter(Producto.id_categoria == id_categoria).all()
+    query = db.query(Producto).filter(Producto.id_categoria == id_categoria)
+    if solo_activos:
+        query = query.filter(Producto.estado == True)
+    return query.all()
 
 
 @router.get("/{id_producto}", response_model=ProductoConCategoria)

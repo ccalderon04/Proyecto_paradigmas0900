@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { obtenerProductos, obtenerProductosPorCategoria } from "@/lib/productosApi";
 import { obtenerCategorias } from "@/lib/categoriasApi";
 import { useCarrito } from "@/context/carritocontext";
+import { useAuth } from "@/lib/useAuth";
 import { formatMoney } from "@/lib/format";
 import { tieneOfertaActiva, precioConDescuento, porcentajeDescuento } from "@/lib/pricing";
 import { Producto, Categoria } from "@/types";
@@ -16,12 +17,14 @@ import { ShoppingCart } from "lucide-react";
 export default function ProductosPage() {
     const searchParams = useSearchParams();
     const categoriaInicial = searchParams.get("categoria");
+    const router = useRouter();
 
     const [productos, setProductos] = useState<Producto[]>([]);
     const [categorias, setCategorias] = useState<Categoria[]>([]);
     const [categoriaActiva, setCategoriaActiva] = useState<string | null>(categoriaInicial);
     const [cargando, setCargando] = useState(true);
     const { agregarProducto } = useCarrito();
+    const { cliente } = useAuth();
 
     useEffect(() => {
         obtenerCategorias()
@@ -30,17 +33,34 @@ export default function ProductosPage() {
     }, []);
 
     useEffect(() => {
-        setCargando(true);
+        let activo = true;
+
         const promesa =
             categoriaActiva === null
             ? obtenerProductos()
             : obtenerProductosPorCategoria(categoriaActiva);
 
         promesa
-            .then(setProductos)
+            .then((data) => {
+                if (activo) setProductos(data);
+            })
             .catch((err) => console.error("Error cargando productos:", err))
-            .finally(() => setCargando(false));
+            .finally(() => {
+                if (activo) setCargando(false);
+            });
+
+        return () => {
+            activo = false;
+        };
     }, [categoriaActiva]);
+
+    const handleAgregar = (producto: Producto) => {
+        if (!cliente) {
+            router.push("/login");
+            return;
+        }
+        agregarProducto(producto.id_producto);
+    };
 
     const nombreCategoriaActiva = categoriaActiva
         ? categorias.find((c) => c.id_categoria === categoriaActiva)?.nombre
@@ -125,7 +145,7 @@ export default function ProductosPage() {
                                     <span className="font-bold text-primary">{formatMoney(producto.precio)}</span>
                                 )}
                                 <button
-                                    onClick={() => agregarProducto(producto)}
+                                    onClick={() => handleAgregar(producto)}
                                     className="bg-primary p-2 rounded-lg hover:bg-primary/90 transition-colors"
                                 >
                                     <ShoppingCart size={16} />

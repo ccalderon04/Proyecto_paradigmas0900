@@ -17,7 +17,7 @@ export default function RegistroPage() {
     const [fechaNacimiento, setFechaNacimiento] = useState("");
     const [correo, setCorreo] = useState("");
     const [telefono, setTelefono] = useState("");
-    const [genero, setGenero] = useState("");
+    const [genero, setGenero] = useState<"M" | "F" | "Otro" | "">("");
     const [nombreUsuario, setNombreUsuario] = useState("");
     const [contrasena, setContrasena] = useState("");
     const [error, setError] = useState("");
@@ -60,7 +60,7 @@ export default function RegistroPage() {
         <div className="min-h-screen bg-white flex items-center justify-center px-4 py-10">
             <div className="bg-neutral text-white rounded-2xl p-10 w-full max-w-2xl relative">
             <button
-                onClick={() => router.back()}
+                onClick={() => router.push("/")}
                 className="absolute top-6 left-6 flex items-center gap-1 text-neutral-light hover:text-white text-sm transition-colors"
             >
                 <ArrowLeft size={16} />
@@ -133,7 +133,7 @@ export default function RegistroPage() {
                         <label className="text-sm font-label block mb-1">Género (opcional)</label>
                         <select
                             value={genero}
-                            onChange={(e) => setGenero(e.target.value)}
+                            onChange={(e) => setGenero(e.target.value as "M" | "F" | "Otro" | "")}
                             className="w-full bg-secondary rounded-lg px-4 py-3 text-white outline-none"
                         >
                             <option value="">Prefiero no decir</option>

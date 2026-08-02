@@ -1,20 +1,22 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import { Producto } from "@/types";
+import { createContext, useContext, useState, ReactNode } from "react";
+import { DetalleCarrito } from "@/types";
 import { precioConDescuento } from "@/lib/pricing";
-
-export interface ItemCarrito {
-    producto: Producto;
-    cantidad: number;
-}
+import {
+    crearOCargarCarrito,
+    agregarProductoCarrito,
+    quitarProductoCarrito,
+} from "@/lib/carritoApi";
 
 interface CarritoContextType {
-    items: ItemCarrito[];
-    agregarProducto: (producto: Producto, cantidad?: number) => void;
-    quitarProducto: (idProducto: number) => void;
-    actualizarCantidad: (idProducto: number, cantidad: number) => void;
-    vaciarCarrito: () => void;
+    idCarrito: string | null;
+    items: DetalleCarrito[];
+    cargarCarritoCliente: (idCliente: string) => Promise<void>;
+    limpiarCarritoLocal: () => void;
+    agregarProducto: (idProducto: string, cantidad?: number) => Promise<void>;
+    quitarProducto: (idProducto: string) => Promise<void>;
+    actualizarCantidad: (idProducto: string, cantidadNueva: number) => Promise<void>;
     total: number;
     cantidadTotal: number;
 }
@@ -22,61 +24,67 @@ interface CarritoContextType {
 const CarritoContext = createContext<CarritoContextType | undefined>(undefined);
 
 export function CarritoProvider({ children }: { children: ReactNode }) {
-    const [items, setItems] = useState<ItemCarrito[]>([]);
+    const [idCarrito, setIdCarrito] = useState<string | null>(null);
+    const [items, setItems] = useState<DetalleCarrito[]>([]);
 
-    useEffect(() => {
-        const guardado = sessionStorage.getItem("carrito");
-        if (guardado) {
-            try {
-            setItems(JSON.parse(guardado));
-            } catch {
-            }
+    const cargarCarritoCliente = async (idCliente: string) => {
+        try {
+            const carrito = await crearOCargarCarrito(idCliente);
+            setIdCarrito(carrito.id_carrito);
+            setItems(carrito.detalles);
+        } catch (err) {
+            console.error("Error cargando carrito:", err);
         }
-    }, []);
-
-    useEffect(() => {
-        sessionStorage.setItem("carrito", JSON.stringify(items));
-    }, [items]);
-
-    const agregarProducto = (producto: Producto, cantidad: number = 1) => {
-        setItems((prev) => {
-            const existente = prev.find((item) => item.producto.id_producto === producto.id_producto);
-            if (existente) {
-            return prev.map((item) =>
-                item.producto.id_producto === producto.id_producto
-                  ? { ...item, cantidad: item.cantidad + cantidad }
-                  : item
-            );
-            }
-            return [...prev, { producto, cantidad }];
-        });
     };
 
-    const quitarProducto = (idProducto: number) => {
-        setItems((prev) => prev.filter((item) => item.producto.id_producto !== idProducto));
+    const limpiarCarritoLocal = () => {
+        setIdCarrito(null);
+        setItems([]);
     };
 
-    const actualizarCantidad = (idProducto: number, cantidad: number) => {
-        if (cantidad <= 0) {
-            quitarProducto(idProducto);
+    const agregarProducto = async (idProducto: string, cantidad: number = 1) => {
+        if (!idCarrito) return;
+        const carrito = await agregarProductoCarrito(idCarrito, idProducto, cantidad);
+        console.log("idCarrito al agregar:", idCarrito);
+        setItems(carrito.detalles);
+    };
+
+    const quitarProducto = async (idProducto: string) => {
+        if (!idCarrito) return;
+        const carrito = await quitarProductoCarrito(idCarrito, idProducto);
+        setItems(carrito.detalles);
+    };
+
+    const actualizarCantidad = async (idProducto: string, cantidadNueva: number) => {
+        if (!idCarrito) return;
+        if (cantidadNueva <= 0) {
+            await quitarProducto(idProducto);
             return;
         }
-        setItems((prev) =>
-            prev.map((item) =>
-            item.producto.id_producto === idProducto ? { ...item, cantidad } : item
-            )
-        );
+        await quitarProductoCarrito(idCarrito, idProducto);
+        const carrito = await agregarProductoCarrito(idCarrito, idProducto, cantidadNueva);
+        setItems(carrito.detalles);
     };
 
-    const vaciarCarrito = () => setItems([]);
-
-
-    const total = items.reduce((acc, item) => acc + precioConDescuento(item.producto) * item.cantidad, 0);
+    const total = items.reduce(
+        (acc, item) => acc + precioConDescuento(item.producto) * item.cantidad,
+        0
+    );
     const cantidadTotal = items.reduce((acc, item) => acc + item.cantidad, 0);
 
     return (
         <CarritoContext.Provider
-            value={{ items, agregarProducto, quitarProducto, actualizarCantidad, vaciarCarrito, total, cantidadTotal }}
+            value={{
+                idCarrito,
+                items,
+                cargarCarritoCliente,
+                limpiarCarritoLocal,
+                agregarProducto,
+                quitarProducto,
+                actualizarCantidad,
+                total,
+                cantidadTotal,
+            }}
         >
             {children}
         </CarritoContext.Provider>

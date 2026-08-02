@@ -13,3 +13,8 @@ export const agregarProductoCarrito = (
         method: "POST",
         body: JSON.stringify({ id_producto: idProducto, cantidad }),
     });
+
+export const quitarProductoCarrito = (idCarrito: string, idProducto: string) =>
+    apiFetch<Carrito>(`/carrito/${idCarrito}/productos/${idProducto}`, {
+        method: "DELETE",
+    });

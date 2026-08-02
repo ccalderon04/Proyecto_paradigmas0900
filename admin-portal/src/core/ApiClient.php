@@ -56,7 +56,6 @@ class ApiClient
         $respuesta = curl_exec($ch);
         $errorCurl = curl_error($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
 
         if ($respuesta === false) {
             return ['ok' => false, 'status' => 0, 'data' => ['detail' => "No se pudo conectar con el backend: $errorCurl"]];

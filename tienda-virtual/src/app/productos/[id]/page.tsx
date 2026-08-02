@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Button from "@/components/Button";
 import { obtenerProductoPorId } from "@/lib/productosApi";
 import { useCarrito } from "@/context/carritocontext";
+import { useAuth } from "@/lib/useAuth";
 import { formatMoney, formatPresentacion } from "@/lib/format";
 import { Producto } from "@/types";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
@@ -16,6 +17,7 @@ import { tieneOfertaActiva, precioConDescuento, porcentajeDescuento } from "@/li
 export default function DetalleProductoPage() {
     const params = useParams();
     const id = params.id as string;
+    const router = useRouter();
 
     const [producto, setProducto] = useState<Producto | null>(null);
     const [cargando, setCargando] = useState(true);
@@ -23,6 +25,7 @@ export default function DetalleProductoPage() {
     const [agregado, setAgregado] = useState(false);
 
     const { agregarProducto } = useCarrito();
+    const { cliente } = useAuth();
 
     useEffect(() => {
         if (!id) return;
@@ -34,7 +37,11 @@ export default function DetalleProductoPage() {
 
     const handleAgregar = () => {
         if (!producto) return;
-        agregarProducto(producto, cantidad);
+        if (!cliente) {
+            router.push("/login");
+            return;
+        }
+        agregarProducto(producto.id_producto, cantidad);
         setAgregado(true);
         setTimeout(() => setAgregado(false), 2000);
     };
@@ -79,26 +86,26 @@ export default function DetalleProductoPage() {
                     </h1>
                     <p className="text-neutral-light mb-6">{producto.descripcion}</p>
 
-                    <p className="font-headline text-3xl font-bold text-primary mb-6">
-                        {tieneOfertaActiva(producto) ? (
-                        <div className="flex items-center gap-3 mb-6">
+                    <div className="mb-6">
+                        {tieneOfertaActiva(producto) && (
+                        <div className="flex items-center gap-3 mb-2">
                             <span className="inline-block bg-tertiary/20 text-tertiary text-xs font-label px-3 py-1 rounded-full">
                                 {porcentajeDescuento(producto)}% de descuento
                             </span>
                         </div>
-                        ) : null}
+                        )}
 
-                        <div className="flex items-baseline gap-3 mb-6">
+                        <div className="flex items-baseline gap-3">
                             {tieneOfertaActiva(producto) && (
                             <span className="text-neutral-light line-through text-lg">
-                        {formatMoney(producto.precio)}
+                                {formatMoney(producto.precio)}
                             </span>
-                        )}
-                    <p className="font-headline text-3xl font-bold text-primary">
-                        {formatMoney(precioConDescuento(producto))}
-                    </p>
+                            )}
+                            <p className="font-headline text-3xl font-bold text-primary">
+                                {formatMoney(precioConDescuento(producto))}
+                            </p>
+                        </div>
                     </div>
-                    </p>
 
                     <div className="flex items-center gap-4 mb-6">
                         <div className="flex items-center bg-secondary rounded-lg text-white">

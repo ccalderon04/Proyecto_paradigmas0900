@@ -5,10 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import { loginUsuario, obtenerClientePorUsuario } from "@/lib/authApi";
+import { useCarrito } from "@/context/carritocontext";
 import { ArrowLeft } from "lucide-react";
 
 export default function LoginPage() {
     const router = useRouter();
+    const { cargarCarritoCliente } = useCarrito();
     const [nombreUsuario, setNombreUsuario] = useState("");
     const [contrasena, setContrasena] = useState("");
     const [error, setError] = useState("");
@@ -22,10 +24,11 @@ export default function LoginPage() {
             const usuario = await loginUsuario({ nombre: nombreUsuario, contrasena });
             const cliente = await obtenerClientePorUsuario(usuario.id_usuario);
             if (!cliente) {
-            setError("Este usuario no tiene un perfil de cliente asociado.");
-            return;
+                setError("Este usuario no tiene un perfil de cliente asociado.");
+                return;
             }
             localStorage.setItem("cliente", JSON.stringify(cliente));
+            await cargarCarritoCliente(cliente.id_cliente);
             router.push("/");
         } catch (err) {
             setError("Usuario o contraseña incorrectos");
@@ -38,7 +41,7 @@ export default function LoginPage() {
         <div className="min-h-screen bg-white flex items-center justify-center px-4">
             <div className="bg-neutral text-white rounded-2xl p-10 w-full max-w-md relative">
             <button
-                onClick={() => router.push("/")}
+                onClick={() => router.back()}
                 className="absolute top-6 left-6 flex items-center gap-1 text-neutral-light hover:text-white text-sm transition-colors"
             >
                 <ArrowLeft size={16} />

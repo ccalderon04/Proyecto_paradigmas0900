@@ -8,8 +8,8 @@ import { useCarrito } from "@/context/carritocontext";
 import { useAuth } from "@/lib/useAuth";
 
 export default function Navbar() {
-  const { cantidadTotal } = useCarrito();
-  const { cliente } = useAuth();
+  const { cantidadTotal, limpiarCarritoLocal } = useCarrito();
+  const { cliente, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -26,11 +26,11 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("cliente");
+    logout();
+    limpiarCarritoLocal();
     setMenuAbierto(false);
     router.push("/");
-    router.refresh();
-  };
+};
 
   return (
     <header className="bg-neutral text-white px-8 py-4 grid grid-cols-3 items-center relative">

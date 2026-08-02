@@ -63,6 +63,7 @@ export interface DetalleCarrito {
     id_detalle: string;
     id_producto: string;
     cantidad: number;
+    producto: Producto;
 }
 
 export interface Carrito {
