@@ -13,7 +13,7 @@ from decimal import Decimal
 
 from sqlalchemy import Boolean, CheckConstraint, Date, Numeric, String, text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
 
@@ -49,7 +49,8 @@ class Descuento(Base):
     fecha_inicio: Mapped[date] = mapped_column(Date, nullable=False)
     fecha_fin: Mapped[date] = mapped_column(Date, nullable=False)
     activo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-
+    productos: Mapped[list["Producto"]] = relationship(back_populates="descuento")
+    
     def esta_vigente(self, hoy: date | None = None) -> bool:
         """Regla de negocio encapsulada: ¿este descuento aplica hoy?"""
         hoy = hoy or date.today()

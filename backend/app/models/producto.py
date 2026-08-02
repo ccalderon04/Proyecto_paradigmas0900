@@ -45,6 +45,9 @@ class Producto(Base):
     id_categoria: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("categoria.id_categoria"), nullable=False
     )
+    id_descuento: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("descuento.id_descuento"), nullable=True
+    )
     nombre: Mapped[str] = mapped_column(String(200), nullable=False)
     descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
     stock: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
@@ -54,6 +57,7 @@ class Producto(Base):
     estado: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     fecha_registro: Mapped[date] = mapped_column(Date, nullable=False, default=date.today)
 
+    descuento: Mapped["Descuento | None"] = relationship(back_populates="productos")
     categoria: Mapped["Categoria"] = relationship(back_populates="productos")
 
     def descontar_stock(self, cantidad: int) -> None:

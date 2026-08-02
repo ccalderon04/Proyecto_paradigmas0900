@@ -11,6 +11,7 @@ export interface ProductoCategoria {
 export interface Producto {
     id_producto: string;
     id_categoria: string;
+    id_descuento: string | null;
     nombre: string;
     descripcion: string | null;
     stock: number;

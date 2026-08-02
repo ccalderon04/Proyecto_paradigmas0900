@@ -8,10 +8,12 @@ from decimal import Decimal
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.categoria import CategoriaRespuesta
+from app.schemas.catalogos import DescuentoRespuesta
 
 
 class ProductoBase(BaseModel):
     id_categoria: uuid.UUID
+    id_descuento: uuid.UUID | None = None
     nombre: str
     descripcion: str | None = None
     stock: int = Field(ge=0, default=0)
