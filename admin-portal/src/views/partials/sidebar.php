@@ -1,5 +1,5 @@
 <?php
-/** Recibe $paginaActual (string) para resaltar el link activo en el menú. */
+
 $paginaActual = $paginaActual ?? '';
 $usuario = Auth::usuarioActual();
 

@@ -1,17 +1,3 @@
-"""
-Modelos de `factura` y `detalle_factura`.
-
-IMPORTANTE: `factura` tiene el constraint
-    CHECK (total = subtotal + impuestos)
-en la base de datos. Esto significa que el cálculo de `total` en
-app/services/facturacion_service.py debe ser EXACTO (misma precisión
-decimal), o Postgres rechazará el INSERT. Ver ese servicio para el
-detalle del cálculo.
-
-El descuento se aplica por LÍNEA (detalle_factura.id_descuento), no a
-nivel de factura completa — así lo define el schema.
-"""
-
 import uuid
 from datetime import datetime
 from decimal import Decimal

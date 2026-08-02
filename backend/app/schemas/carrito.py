@@ -1,5 +1,3 @@
-"""Schemas Pydantic de `carrito` y `detalle_carrito`."""
-
 import uuid
 from datetime import date
 from decimal import Decimal

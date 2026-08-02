@@ -1,11 +1,3 @@
-"""
-Modelos de `departamento` y `ciudad`.
-
-Son catálogos simples usados por `direccion` para ubicar al cliente.
-No tienen relación jerárquica explícita entre sí en el schema (una
-dirección referencia a ambos por separado).
-"""
-
 import uuid
 
 from sqlalchemy import String, text

@@ -1,5 +1,3 @@
-"""Schemas Pydantic de `producto`."""
-
 from typing import Optional
 import uuid
 from datetime import date
@@ -47,11 +45,6 @@ class ProductoRespuesta(ProductoBase):
 
 
 class ProductoConCategoria(ProductoRespuesta):
-    """
-    Versión extendida usada en el endpoint de detalle de producto —
-    la tienda virtual necesita el nombre de la categoría, no solo su ID,
-    para mostrar la página de producto individual.
-    """
 
     categoria: CategoriaRespuesta
 

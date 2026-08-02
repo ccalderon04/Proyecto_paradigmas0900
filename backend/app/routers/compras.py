@@ -1,5 +1,3 @@
-"""Router de `/compras` — registro de compras a proveedor, aumenta inventario."""
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -13,7 +11,6 @@ router = APIRouter(prefix="/compras", tags=["Compras"])
 
 @router.post("/", response_model=CompraRespuesta, status_code=status.HTTP_201_CREATED)
 def crear_compra(datos: CompraCrear, db: Session = Depends(get_db)):
-    """Registra una compra a proveedor y aumenta automáticamente el stock de cada producto."""
     items = [(item.id_producto, item.cantidad, item.precio_unitario) for item in datos.items]
 
     try:
@@ -26,5 +23,4 @@ def crear_compra(datos: CompraCrear, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=list[CompraRespuesta])
 def listar_compras(db: Session = Depends(get_db)):
-    """Historial de compras — usado por compras.php para mostrar el listado."""
     return db.query(Compra).all()

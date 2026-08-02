@@ -1,7 +1,5 @@
 <?php
-/**
- * Encapsula el manejo de sesión del administrador.
- */
+
 class Auth
 {
     private const CLAVE_SESION = 'admin_autenticado';

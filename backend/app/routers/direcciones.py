@@ -1,5 +1,3 @@
-"""Router de `/direcciones` — crear/editar direcciones de entrega de un cliente."""
-
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status

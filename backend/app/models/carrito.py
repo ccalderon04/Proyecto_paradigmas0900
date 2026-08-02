@@ -1,11 +1,3 @@
-"""
-Modelos de `carrito` y `detalle_carrito`.
-
-Composición: un Carrito "tiene muchos" DetalleCarrito. El carrito expone
-métodos para calcular su propio subtotal recorriendo sus líneas, en vez
-de que esa lógica viva dispersa en los routers.
-"""
-
 import uuid
 from datetime import date
 from decimal import Decimal
@@ -35,17 +27,6 @@ class Carrito(Base):
     )
 
     def calcular_subtotal(self) -> Decimal:
-        """
-        Suma (precio * cantidad) de cada línea del carrito.
-
-        Nota de diseño: usamos un bucle explícito en vez de
-        `sum(map(...))` aquí porque este método vive en el modelo del
-        ORM y necesita acceso a `linea.producto.precio` (relación
-        cargada). La versión con map/filter/reduce sobre datos ya
-        desacoplados del ORM vive en app/services/facturacion_service.py,
-        que es donde se demuestra el paradigma funcional pedido por
-        el proyecto sin mezclarlo con detalles de persistencia.
-        """
         total = Decimal("0")
         for linea in self.detalles:
             total += linea.producto.precio * linea.cantidad

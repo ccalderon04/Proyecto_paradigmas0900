@@ -1,11 +1,3 @@
-"""
-Modelo de `cliente`.
-
-Composición con Usuario: cada Cliente "tiene un" Usuario asociado
-(relación 1:1 vía id_usuario UNIQUE). Los datos de autenticación viven
-en Usuario; los datos personales del cliente viven aquí.
-"""
-
 import uuid
 from datetime import date
 
@@ -53,6 +45,5 @@ class Cliente(Base):
     back_populates="cliente", passive_deletes=True
 )
     def nombre_completo(self) -> str:
-        """Compone el nombre completo a partir de las partes almacenadas."""
         partes = [self.p_nombre, self.s_nombre, self.p_apellido, self.s_apellido]
         return " ".join(p for p in partes if p)

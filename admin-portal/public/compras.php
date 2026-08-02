@@ -14,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['accion'] ?? '') === 'regis
     $cantidades = $_POST['cantidad'] ?? [];
     $precios = $_POST['precio_unitario'] ?? [];
 
-    // Arma la lista de items descartando filas vacías (array_filter con función flecha)
     $indicesValidos = array_filter(
         array_keys($idsProducto),
         fn($i) => !empty($idsProducto[$i]) && (int) $cantidades[$i] > 0
@@ -50,7 +49,6 @@ $productos = $productos['ok'] ? filtrar_activos($productos['data']) : [];
 $compras = $compraService->listar();
 $compras = $compras['ok'] ? $compras['data'] : [];
 
-// Mapa id_producto -> nombre, para mostrar el detalle de cada compra (array_combine + helpers)
 $nombresProducto = array_combine(extraer_campo($productos, 'id_producto'), extraer_campo($productos, 'nombre'));
 
 $tituloPagina = 'Compras';

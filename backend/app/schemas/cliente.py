@@ -1,5 +1,3 @@
-"""Schemas Pydantic de `cliente`."""
-
 import uuid
 from datetime import date
 
@@ -18,12 +16,6 @@ class ClienteBase(BaseModel):
 
 
 class ClienteRegistro(ClienteBase):
-    """
-    Registro público de un cliente nuevo (lo dispara la tienda virtual):
-    crea el Usuario (autenticación) y el Cliente (datos personales) en
-    una sola operación, ya que el schema los modela como 1:1.
-    """
-
     nombre_usuario: str
     contrasena: str = Field(min_length=6)
 

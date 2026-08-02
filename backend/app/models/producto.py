@@ -1,13 +1,3 @@
-"""
-Modelo de `producto`.
-
-Encapsula las operaciones de stock (descontar/aumentar) como métodos
-propios en vez de dejar que otras capas manipulen `self.stock`
-directamente sin validar — así la regla "el stock nunca puede quedar
-negativo" vive en un solo lugar, aunque la base de datos también la
-protege con el CHECK `ck_producto_stock`.
-"""
-
 import uuid
 from datetime import date
 from decimal import Decimal
@@ -20,7 +10,6 @@ from app.core.database import Base
 
 
 class StockInsuficienteError(Exception):
-    """Se lanza cuando se intenta descontar más stock del disponible."""
 
     def __init__(self, id_producto: uuid.UUID, disponible: int, solicitado: int):
         self.id_producto = id_producto
@@ -61,11 +50,6 @@ class Producto(Base):
     categoria: Mapped["Categoria"] = relationship(back_populates="productos")
 
     def descontar_stock(self, cantidad: int) -> None:
-        """
-        Descuenta stock al vender (factura). Lanza StockInsuficienteError
-        si no hay suficiente, en vez de dejar que el stock quede negativo
-        y que sea el CHECK de la base de datos el único que lo detenga.
-        """
         if cantidad <= 0:
             raise ValueError("La cantidad a descontar debe ser positiva")
         if self.stock < cantidad:
@@ -73,7 +57,6 @@ class Producto(Base):
         self.stock -= cantidad
 
     def aumentar_stock(self, cantidad: int) -> None:
-        """Aumenta stock al registrar una compra a proveedor."""
         if cantidad <= 0:
             raise ValueError("La cantidad a aumentar debe ser positiva")
         self.stock += cantidad

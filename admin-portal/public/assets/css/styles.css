@@ -103,7 +103,6 @@ tbody tr:hover { background: rgba(255,255,255,.03); }
 .badge--off { background: rgba(148,163,184,.18); color: var(--color-neutral-light); }
 .badge--alerta { background: rgba(255,51,68,.18); color: var(--color-primary-light); }
 
-/* --- Formularios --- */
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
 label { display: block; font-size: .82rem; margin-bottom: .3rem; color: var(--color-neutral-light); }
 input, select, textarea {
@@ -118,7 +117,6 @@ input, select, textarea {
 }
 input:focus, select:focus, textarea:focus { outline: 2px solid var(--color-tertiary); border-color: transparent; }
 
-/* --- Botones --- */
 .btn {
     display: inline-block;
     padding: .6rem 1.2rem;
@@ -140,12 +138,10 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--color-terti
 .btn--sm { padding: .35rem .7rem; font-size: .78rem; }
 .acciones { display: flex; gap: .4rem; }
 
-/* --- Alertas --- */
 .alerta { padding: .8rem 1rem; border-radius: var(--radius); margin-bottom: 1.2rem; font-size: .9rem; }
 .alerta--error { background: rgba(255,51,68,.12); color: var(--color-primary-light); border: 1px solid rgba(255,51,68,.3); }
 .alerta--ok { background: rgba(0,151,140,.14); color: var(--color-tertiary); border: 1px solid rgba(0,151,140,.35); }
 
-/* --- Login --- */
 .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
 .login-card { background: var(--color-secondary); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 380px; }
 .login-card p { color: var(--color-neutral-light); margin-bottom: 1.5rem; font-size: .9rem; }

@@ -29,12 +29,6 @@ class ApiClient
         return $this->enviar('DELETE', $endpoint);
     }
 
-    /**
-     * Hace la petición real con cURL y siempre devuelve el mismo formato,
-     * para que el resto del portal no tenga que preocuparse por cURL.
-     *
-     * @return array{ok: bool, status: int, data: mixed}
-     */
     private function enviar(string $metodo, string $endpoint, ?array $datos = null): array
     {
         $url = $this->baseUrl . $endpoint;

@@ -1,12 +1,3 @@
-"""
-Modelos de `metodo_pago` y `descuento`.
-
-`Descuento` encapsula su propia regla de vigencia y cálculo: dado que
-puede ser 'porcentaje' o 'monto_fijo', centralizamos aquí cómo se aplica
-sobre un monto, para que la lógica de facturación (app/services/) no
-tenga que conocer los detalles internos del descuento (encapsulamiento).
-"""
-
 import uuid
 from datetime import date
 from decimal import Decimal
@@ -57,11 +48,6 @@ class Descuento(Base):
         return self.activo and self.fecha_inicio <= hoy <= self.fecha_fin
 
     def aplicar_sobre(self, monto: Decimal) -> Decimal:
-        """
-        Calcula el monto de descuento sobre un valor dado, sin mutar
-        nada externo (función del propio objeto, sin efectos secundarios
-        fuera de sí mismo — coherente con el enfoque funcional del proyecto).
-        """
         if self.tipo == "porcentaje":
             return (monto * self.valor / Decimal("100")).quantize(Decimal("0.01"))
         return min(self.valor, monto)  # monto_fijo no puede descontar más que el monto mismo

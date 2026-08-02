@@ -1,11 +1,3 @@
-"""
-Router de `/categorias` — CRUD completo.
-
-La tienda virtual necesita GET /categorias para el filtro "Explora
-Categorías" (según la guía del proyecto); el admin necesita el resto
-del CRUD para gestionarlas.
-"""
-
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status

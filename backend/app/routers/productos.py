@@ -1,10 +1,3 @@
-"""
-Router de `/productos` — CRUD completo + endpoints que necesita la tienda:
-- listar todos
-- filtrar por categoría (para "Explora Categorías")
-- detalle por ID (para la página de producto individual)
-"""
-
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -24,12 +17,6 @@ router = APIRouter(prefix="/productos", tags=["Productos"])
 
 @router.get("/", response_model=list[ProductoRespuesta])
 def listar_productos(solo_activos: bool = True, db: Session = Depends(get_db)):
-    """
-    Lista productos. Por defecto solo devuelve los activos (estado=True),
-    que es lo que necesita la tienda virtual. El portal admin puede pedir
-    ?solo_activos=false para ver también los desactivados y poder
-    reactivarlos.
-    """
     query = db.query(Producto)
     if solo_activos:
         query = query.filter(Producto.estado == True)
@@ -40,7 +27,6 @@ def listar_productos(solo_activos: bool = True, db: Session = Depends(get_db)):
 def filtrar_por_categoria(
     id_categoria: uuid.UUID, solo_activos: bool = True, db: Session = Depends(get_db)
 ):
-    """Filtra productos por categoría — usado por 'Explora Categorías' en la tienda."""
     query = db.query(Producto).filter(Producto.id_categoria == id_categoria)
     if solo_activos:
         query = query.filter(Producto.estado == True)
@@ -49,10 +35,6 @@ def filtrar_por_categoria(
 
 @router.get("/{id_producto}", response_model=ProductoConCategoria)
 def obtener_producto(id_producto: uuid.UUID, db: Session = Depends(get_db)):
-    """
-    Detalle de un producto con su categoría incluida — usado por la
-    página de producto individual de la tienda virtual.
-    """
     producto = (
         db.query(Producto)
         .options(joinedload(Producto.categoria))

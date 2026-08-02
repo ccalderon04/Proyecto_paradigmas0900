@@ -1,14 +1,10 @@
 <?php
 require_once __DIR__ . '/../core/ApiClient.php';
 
-/**
- * Clase base abstracta: agrupa las operaciones CRUD comunes a casi todos
- * los recursos del backend (listar/obtener/crear/actualizar/eliminar).
- */
 abstract class BaseService
 {
     protected ApiClient $api;
-    protected string $recurso; // ej. "/categorias"
+    protected string $recurso;
 
     public function __construct(ApiClient $api)
     {

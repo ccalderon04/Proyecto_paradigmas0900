@@ -1,5 +1,3 @@
-"""Schemas Pydantic de `proveedor`, `compra` y `detalle_compra`."""
-
 import uuid
 from datetime import datetime
 from decimal import Decimal
@@ -40,8 +38,6 @@ class ItemCompra(BaseModel):
 
 
 class CompraCrear(BaseModel):
-    """Registro de una compra a proveedor — aumenta el inventario de cada producto."""
-
     id_proveedor: uuid.UUID
     items: list[ItemCompra] = Field(min_length=1)
 

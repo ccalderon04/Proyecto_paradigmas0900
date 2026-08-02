@@ -1,11 +1,3 @@
-"""
-Servicio de compras (registro de compras a proveedor → aumenta inventario).
-
-Mismo patrón que app/services/facturacion_service.py: separar el
-cálculo puro (map/reduce sobre las líneas) de la orquestación con
-efectos secundarios (aumentar stock, persistir en DB).
-"""
-
 import uuid
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
@@ -34,7 +26,6 @@ class LineaCompraCalculada:
 def calcular_linea_compra(
     id_producto: uuid.UUID, cantidad: int, precio_unitario: Decimal
 ) -> LineaCompraCalculada:
-    """Función pura: calcula el subtotal de una línea de compra."""
     return LineaCompraCalculada(
         id_producto=id_producto,
         cantidad=cantidad,
@@ -44,7 +35,6 @@ def calcular_linea_compra(
 
 
 def calcular_total_compra(lineas: list[LineaCompraCalculada]) -> Decimal:
-    """Función pura: suma los subtotales de todas las líneas (reduce)."""
     return _redondear(
         reduce(lambda acumulado, linea: acumulado + linea.subtotal, lineas, Decimal("0.00"))
     )
@@ -53,18 +43,12 @@ def calcular_total_compra(lineas: list[LineaCompraCalculada]) -> Decimal:
 def calcular_lineas_compra(
     items: list[tuple[uuid.UUID, int, Decimal]]
 ) -> list[LineaCompraCalculada]:
-    """Función pura: aplica `map` para calcular cada línea de una lista de items."""
     return list(map(lambda item: calcular_linea_compra(item[0], item[1], item[2]), items))
 
 
 def registrar_compra(
     db: Session, id_proveedor: uuid.UUID, items: list[tuple[uuid.UUID, int, Decimal]]
 ) -> Compra:
-    """
-    Orquesta el registro de una compra: calcula las líneas y el total
-    (delegado a las funciones puras de arriba), aumenta el stock de
-    cada producto comprado, y persiste todo.
-    """
     lineas = calcular_lineas_compra(items)
     total = calcular_total_compra(lineas)
 

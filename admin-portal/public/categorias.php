@@ -7,28 +7,24 @@ $error = null;
 $exito = null;
 $editando = null;
 
-// --- Crear ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['accion'] ?? '') === 'crear') {
     $resp = $servicio->crear(['nombre' => trim($_POST['nombre'])]);
     if ($resp['ok']) { $exito = 'Categoría creada correctamente.'; }
     else { $error = $resp['data']['detail'] ?? 'No se pudo crear la categoría.'; }
 }
 
-// --- Actualizar ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['accion'] ?? '') === 'actualizar') {
     $resp = $servicio->actualizar($_POST['id_categoria'], ['nombre' => trim($_POST['nombre'])]);
     if ($resp['ok']) { $exito = 'Categoría actualizada correctamente.'; }
     else { $error = $resp['data']['detail'] ?? 'No se pudo actualizar la categoría.'; }
 }
 
-// --- Eliminar ---
 if (isset($_GET['eliminar'])) {
     $resp = $servicio->eliminar($_GET['eliminar']);
     if ($resp['ok']) { $exito = 'Categoría eliminada.'; }
     else { $error = $resp['data']['detail'] ?? 'No se pudo eliminar (puede tener productos asociados).'; }
 }
 
-// --- Cargar la que se está editando ---
 if (isset($_GET['editar'])) {
     $resp = $servicio->obtener($_GET['editar']);
     if ($resp['ok']) { $editando = $resp['data']; }

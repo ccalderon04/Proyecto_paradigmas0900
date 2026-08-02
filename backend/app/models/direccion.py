@@ -1,5 +1,3 @@
-"""Modelo de `direccion` — direcciones de entrega asociadas a un cliente."""
-
 import uuid
 
 from sqlalchemy import ForeignKey, String, text

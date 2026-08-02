@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../core/ApiClient.php';
 
-/** Servicio de autenticación: habla con POST /usuarios/login. */
 class AuthService
 {
     private ApiClient $api;

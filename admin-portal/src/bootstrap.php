@@ -1,8 +1,5 @@
 <?php
-/**
- * Se incluye al inicio de cada página en public/. Carga configuración,
- * las clases core y los servicios, e inicia la sesión.
- */
+
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/core/ApiClient.php';
 require_once __DIR__ . '/core/Auth.php';
@@ -21,5 +18,4 @@ require_once __DIR__ . '/services/ClienteService.php';
 
 Auth::iniciar();
 
-// Una sola instancia de ApiClient para todo el request (se la inyectamos a cada servicio)
 $api = new ApiClient(API_BASE_URL);

@@ -1,13 +1,3 @@
-"""
-Router de `/metodos-pago` (listado simple) y `/descuentos` (CRUD).
-
-`/metodos-pago` se mantiene solo lectura, tal como pide la guía. Para
-`/descuentos` se agregó CRUD completo además del listado — el admin
-necesita poder crear y editar descuentos desde el portal, y la tabla
-tiene reglas de negocio (rango de porcentaje, coherencia de fechas)
-que conviene validar en la API antes de llegar al CHECK de Postgres.
-"""
-
 import uuid
 from decimal import Decimal
 
@@ -33,7 +23,6 @@ def listar_metodos_pago(db: Session = Depends(get_db)):
 
 @router.get("/descuentos/", response_model=list[DescuentoRespuesta])
 def listar_descuentos(db: Session = Depends(get_db)):
-    """Lista los descuentos activos (la vigencia por fecha se valida al aplicar, no aquí)."""
     return db.query(Descuento).filter(Descuento.activo == True).all()  # noqa: E712
 
 
@@ -47,10 +36,6 @@ def obtener_descuento(id_descuento: uuid.UUID, db: Session = Depends(get_db)):
 
 @router.post("/descuentos/", response_model=DescuentoRespuesta, status_code=status.HTTP_201_CREATED)
 def crear_descuento(datos: DescuentoCrear, db: Session = Depends(get_db)):
-    """
-    Las reglas tipo/valor y fechas ya se validaron en el schema
-    (DescuentoBase.validar_reglas_de_negocio) antes de llegar aquí.
-    """
     descuento = Descuento(**datos.model_dump())
     db.add(descuento)
     db.commit()
@@ -70,10 +55,6 @@ def actualizar_descuento(
     for campo, valor in cambios.items():
         setattr(descuento, campo, valor)
 
-    # Revalidar las reglas cruzadas con el estado final del objeto (no solo
-    # con los campos que llegaron en este PUT), porque una actualización
-    # parcial podría, por ejemplo, cambiar solo `valor` y dejarlo inválido
-    # para el `tipo` que ya tenía guardado.
     tipo_final = descuento.tipo
     valor_final = descuento.valor
     if tipo_final == "porcentaje" and not (Decimal("0") < valor_final <= Decimal("100")):

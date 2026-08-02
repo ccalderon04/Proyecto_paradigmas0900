@@ -1,15 +1,3 @@
-"""
-Pruebas del servicio de facturación.
-
-Nótese que estas pruebas NO necesitan una base de datos: gracias a que
-`calcular_desglose_factura` es una función pura, se puede probar con
-datos simples de Python. Esto es una demostración directa de por qué
-separar el cálculo (funcional) de la persistencia (efectos secundarios)
-importa en la práctica, no solo en la teoría.
-
-Ejecutar con: pytest tests/test_facturacion_service.py -v
-"""
-
 import uuid
 from datetime import date, timedelta
 from decimal import Decimal
@@ -26,7 +14,6 @@ from app.services.facturacion_service import (
 
 
 def _descuento_porcentaje(valor: str) -> Descuento:
-    """Helper: crea un Descuento tipo porcentaje vigente hoy, sin tocar la DB."""
     return Descuento(
         id_descuento=uuid.uuid4(),
         nombre="Descuento de prueba",
@@ -56,7 +43,6 @@ def test_calcular_linea_con_descuento_porcentaje():
         precio_unitario=Decimal("50.00"),
         descuento=descuento,
     )
-    # subtotal_linea = 100.00, descuento 10% = 10.00, total = 90.00
     assert linea.monto_descuento == Decimal("10.00")
     assert linea.total_linea == Decimal("90.00")
 
@@ -73,9 +59,6 @@ def test_desglose_completo_sin_descuentos():
     assert desglose.impuestos == Decimal("97.50")  # 650 * 0.15
     assert desglose.total == Decimal("747.50")
 
-    # LA PRUEBA MÁS IMPORTANTE: el CHECK de la base de datos exige
-    # total = subtotal + impuestos EXACTAMENTE. Si esto falla, Supabase
-    # va a rechazar el INSERT con un error de constraint violation.
     assert desglose.total == desglose.subtotal + desglose.impuestos
 
 
@@ -83,13 +66,13 @@ def test_desglose_con_descuento_mixto():
     id_p1, id_p2 = uuid.uuid4(), uuid.uuid4()
     descuento = _descuento_porcentaje("20")
     items = [
-        (id_p1, 1, Decimal("100.00"), descuento),  # 100 - 20% = 80.00
-        (id_p2, 2, Decimal("50.00"), None),  # 100.00, sin descuento
+        (id_p1, 1, Decimal("100.00"), descuento),
+        (id_p2, 2, Decimal("50.00"), None),
     ]
     desglose = calcular_desglose_factura(items, tasa_impuesto=Decimal("0.15"))
 
-    assert desglose.subtotal == Decimal("180.00")  # 80 + 100
-    assert desglose.total == desglose.subtotal + desglose.impuestos  # el check crítico otra vez
+    assert desglose.subtotal == Decimal("180.00")
+    assert desglose.total == desglose.subtotal + desglose.impuestos
 
 
 def test_lineas_con_descuento_filtra_correctamente():
@@ -119,12 +102,6 @@ def test_total_ahorrado_suma_todos_los_descuentos():
 
 
 def test_carrito_grande_no_pierde_precision_en_check_de_factura():
-    """
-    Prueba con muchas líneas y descuentos variados — el escenario donde
-    errores de redondeo acumulado tienen más chance de romper el
-    CHECK (total = subtotal + impuestos). Si esta prueba pasa, el
-    redondeo por línea está protegiendo correctamente contra eso.
-    """
     items = []
     for i in range(7):
         descuento = _descuento_porcentaje(str(5 + i)) if i % 2 == 0 else None

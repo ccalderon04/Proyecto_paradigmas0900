@@ -1,12 +1,3 @@
-"""
-Router de `/clientes`.
-
-El registro público (POST /clientes/registro) lo dispara la tienda
-virtual y crea Usuario + Cliente en una sola transacción — si algo
-falla a mitad de camino (ej. correo duplicado), no debe quedar un
-Usuario huérfano sin su Cliente asociado.
-"""
-
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -24,15 +15,14 @@ router = APIRouter(prefix="/clientes", tags=["Clientes"])
 
 @router.post("/registro", response_model=ClienteRespuesta, status_code=status.HTTP_201_CREATED)
 def registrar_cliente(datos: ClienteRegistro, db: Session = Depends(get_db)):
-    """Registro público de un cliente nuevo — usado por la tienda virtual."""
     usuario = Usuario(
         nombre=datos.nombre_usuario,
         contrasena=hashear_contrasena(datos.contrasena),
         rol="cliente",
     )
     db.add(usuario)
-    db.flush()  # asigna id_usuario sin cerrar la transacción todavía
-
+    db.flush()
+    
     cliente = Cliente(
         id_usuario=usuario.id_usuario,
         p_nombre=datos.p_nombre,

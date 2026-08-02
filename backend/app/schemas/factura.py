@@ -1,5 +1,3 @@
-"""Schemas Pydantic de `factura` y `detalle_factura`."""
-
 import uuid
 from datetime import datetime
 from decimal import Decimal
@@ -14,7 +12,6 @@ class FacturaGenerar(BaseModel):
 
 
 class ProductoResumenFactura(BaseModel):
-    """Versión mínima del producto, solo para mostrar en el detalle de una factura."""
 
     id_producto: uuid.UUID
     nombre: str

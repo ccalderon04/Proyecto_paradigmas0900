@@ -54,7 +54,6 @@ $descuentos = $descuentos['ok'] ? $descuentos['data'] : [];
 $productos = $servicio->listar();
 $productos = $productos['ok'] ? $productos['data'] : [];
 
-// Mapa id_categoria -> nombre, para mostrar el nombre en la tabla (array_map + array_combine)
 $nombresCategoria = array_combine(
     extraer_campo($categorias, 'id_categoria'),
     extraer_campo($categorias, 'nombre')

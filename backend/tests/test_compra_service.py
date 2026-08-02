@@ -1,5 +1,3 @@
-"""Pruebas del servicio de compras (mismo patrón que test_facturacion_service.py)."""
-
 import uuid
 from decimal import Decimal
 

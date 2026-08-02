@@ -12,7 +12,6 @@ $categorias = $categoriaService->listar();
 $categorias = $categorias['ok'] ? $categorias['data'] : [];
 $nombresCategoria = array_combine(extraer_campo($categorias, 'id_categoria'), extraer_campo($categorias, 'nombre'));
 
-// Filtro simple por categoría desde la URL (?categoria=...)
 $filtroCategoria = $_GET['categoria'] ?? '';
 if ($filtroCategoria !== '') {
     $productos = array_values(array_filter($productos, fn($p) => $p['id_categoria'] === $filtroCategoria));

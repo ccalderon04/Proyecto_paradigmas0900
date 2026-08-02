@@ -1,5 +1,3 @@
-"""Router de `/proveedores` — CRUD, usado solo por el portal admin."""
-
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status

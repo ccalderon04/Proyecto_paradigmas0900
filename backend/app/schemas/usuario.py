@@ -1,5 +1,3 @@
-"""Schemas Pydantic de `usuario` — incluye login."""
-
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -23,11 +21,6 @@ class UsuarioActualizar(BaseModel):
 
 
 class UsuarioRespuesta(UsuarioBase):
-    """
-    Nunca se devuelve `contrasena` en las respuestas — ni en texto plano
-    ni hasheada. Aunque el proyecto pide login simple sin JWT, exponer
-    la contraseña en cualquier endpoint sigue siendo evitable sin costo.
-    """
 
     id_usuario: uuid.UUID
 
@@ -40,7 +33,6 @@ class LoginPeticion(BaseModel):
 
 
 class LoginRespuesta(BaseModel):
-    """Datos básicos del usuario autenticado — sin JWT ni sesiones, como pide el proyecto."""
 
     id_usuario: uuid.UUID
     nombre: str

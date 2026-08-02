@@ -1,5 +1,3 @@
-"""Modelos de `proveedor`, `compra` y `detalle_compra` (módulo de inventario)."""
-
 import uuid
 from datetime import datetime
 from decimal import Decimal

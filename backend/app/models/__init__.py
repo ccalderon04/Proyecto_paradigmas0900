@@ -1,12 +1,3 @@
-"""
-Importa todos los modelos en un solo lugar.
-
-SQLAlchemy necesita que todas las clases mapeadas estén registradas
-antes de resolver relaciones declaradas como strings (ej. Mapped["Cliente"]
-dentro de usuario.py). Importarlas aquí garantiza que eso pase sin
-importar en qué orden se usen los módulos en el resto de la app.
-"""
-
 from app.models.usuario import Usuario
 from app.models.ubicacion import Departamento, Ciudad
 from app.models.categoria import Categoria

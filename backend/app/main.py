@@ -1,17 +1,3 @@
-"""
-Punto de entrada del backend REST.
-
-Ejecutar en desarrollo con:
-    uvicorn app.main:app --reload
-
-La documentación interactiva queda disponible automáticamente en:
-    http://localhost:8000/docs   (Swagger UI)
-    http://localhost:8000/redoc  (Redoc)
-
-Comparte esa URL con el equipo de PHP y JavaScript en cuanto tengas
-los primeros endpoints funcionando (punto 6 de la guía del proyecto).
-"""
-
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -39,13 +25,6 @@ from app.routers import (
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Se ejecuta una vez al arrancar la aplicación. Verifica que la conexión
-    a Supabase funcione ANTES de aceptar peticiones — así un error de
-    configuración (.env mal escrito, credenciales incorrectas) aparece
-    de inmediato en la consola en vez de fallar silenciosamente en el
-    primer endpoint que alguien pruebe.
-    """
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
@@ -63,9 +42,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# --- CORS ---
-# Sin esto, ni el portal PHP ni la tienda en Next.js podrán llamar a la API
-# aunque los endpoints funcionen perfecto (punto 3 de la guía del proyecto).
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -77,11 +53,9 @@ app.add_middleware(
 
 @app.get("/")
 def raiz():
-    """Endpoint de salud simple para confirmar que el servidor está vivo."""
     return {"mensaje": "API de Tienda Deportiva activa", "docs": "/docs"}
 
 
-# Registro de todos los grupos de endpoints.
 app.include_router(usuarios.router)
 app.include_router(clientes.router)
 app.include_router(direcciones.router)

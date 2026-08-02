@@ -1,7 +1,4 @@
 <?php
-/**
- * Configuración central del portal.
- */
 
 function cargar_env(string $rutaEnv): void
 {

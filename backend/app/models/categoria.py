@@ -1,5 +1,3 @@
-"""Modelo de `categoria` — catálogo usado por `producto` para filtrado."""
-
 import uuid
 
 from sqlalchemy import String, text

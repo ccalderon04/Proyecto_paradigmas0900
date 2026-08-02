@@ -1,5 +1,3 @@
-"""Schemas Pydantic de `direccion`."""
-
 import uuid
 
 from pydantic import BaseModel, ConfigDict
