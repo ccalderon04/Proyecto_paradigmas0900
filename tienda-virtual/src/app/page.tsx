@@ -14,6 +14,7 @@ import { Producto, Categoria } from "@/types";
 import { ArrowRight, ShoppingCart } from "lucide-react";
 import { formatMoney } from "@/lib/format";
 import { tieneOfertaActiva, precioConDescuento, porcentajeDescuento } from "@/lib/pricing";
+import { Sesion } from "@/models/Sesion";
 
 export default function Home() {
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -38,10 +39,13 @@ export default function Home() {
   }, []);
 
   const handleAgregar = (producto: Producto) => {
-    if (!cliente) {
+    const sesionActual = Sesion.obtenerCliente();
+
+    if (!sesionActual) {
       router.push("/login");
       return;
     }
+    
     agregarProducto(producto.id_producto);
   };
 

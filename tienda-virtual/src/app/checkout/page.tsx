@@ -21,7 +21,7 @@ import { MapPin, Plus, CreditCard } from "lucide-react";
 
 
 export default function CheckoutPage() {
-    const { items, total, limpiarCarritoLocal } = useCarrito();
+    const { items, total, limpiarCarritoLocal, cargarCarritoCliente } = useCarrito();
     const { cliente, cargando: cargandoAuth } = useAuth();
     const router = useRouter();
 
@@ -117,7 +117,7 @@ useEffect(() => {
         descuentos_por_producto: descuentosPorProducto,
     });
 
-    limpiarCarritoLocal();
+    await cargarCarritoCliente(cliente.id_cliente);
     router.push(`/factura/${factura.id_factura}`);
     } catch (err) {
     const mensaje = err instanceof Error ? err.message : "Error desconocido";

@@ -1,13 +1,8 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useRef, useState, useCallback, ReactNode } from "react";
 import { DetalleCarrito } from "@/types";
-import { precioConDescuento } from "@/lib/pricing";
-import {
-    crearOCargarCarrito,
-    agregarProductoCarrito,
-    quitarProductoCarrito,
-} from "@/lib/carritoApi";
+import { Carrito } from "@/models/Carrito";
 
 interface CarritoContextType {
     idCarrito: string | null;
@@ -23,67 +18,75 @@ interface CarritoContextType {
 
 const CarritoContext = createContext<CarritoContextType | undefined>(undefined);
 
+interface CarritoSnapshot {
+    idCarrito: string | null;
+    items: DetalleCarrito[];
+    total: number;
+    cantidadTotal: number;
+}
+
+function tomarSnapshot(carrito: Carrito): CarritoSnapshot {
+    return {
+        idCarrito: carrito.getIdCarrito(),
+        items: carrito.getItems(),
+        total: carrito.total(),
+        cantidadTotal: carrito.cantidadTotal(),
+    };
+}
+
 export function CarritoProvider({ children }: { children: ReactNode }) {
-    const [idCarrito, setIdCarrito] = useState<string | null>(null);
-    const [items, setItems] = useState<DetalleCarrito[]>([]);
+    const [carrito] = useState(() => new Carrito());
+    
+    const carritoRef = useRef(carrito);
+
+    const [snapshot, setSnapshot] = useState<CarritoSnapshot>(() => tomarSnapshot(carrito));
+
+    const sincronizar = useCallback(() => {
+        setSnapshot(tomarSnapshot(carritoRef.current));
+    }, []);
 
     const cargarCarritoCliente = async (idCliente: string) => {
         try {
-            const carrito = await crearOCargarCarrito(idCliente);
-            setIdCarrito(carrito.id_carrito);
-            setItems(carrito.detalles);
+            await carritoRef.current.cargar(idCliente);
         } catch (err) {
             console.error("Error cargando carrito:", err);
+        } finally {
+            sincronizar();
         }
     };
 
     const limpiarCarritoLocal = () => {
-        setIdCarrito(null);
-        setItems([]);
+        carritoRef.current.limpiar();
+        sincronizar();
     };
 
     const agregarProducto = async (idProducto: string, cantidad: number = 1) => {
-        if (!idCarrito) return;
-        const carrito = await agregarProductoCarrito(idCarrito, idProducto, cantidad);
-        console.log("idCarrito al agregar:", idCarrito);
-        setItems(carrito.detalles);
+        await carritoRef.current.agregarProducto(idProducto, cantidad);
+        sincronizar();
     };
 
     const quitarProducto = async (idProducto: string) => {
-        if (!idCarrito) return;
-        const carrito = await quitarProductoCarrito(idCarrito, idProducto);
-        setItems(carrito.detalles);
+        await carritoRef.current.quitarProducto(idProducto);
+        sincronizar();
     };
 
     const actualizarCantidad = async (idProducto: string, cantidadNueva: number) => {
-        if (!idCarrito) return;
-        if (cantidadNueva <= 0) {
-            await quitarProducto(idProducto);
-            return;
-        }
-        await quitarProductoCarrito(idCarrito, idProducto);
-        const carrito = await agregarProductoCarrito(idCarrito, idProducto, cantidadNueva);
-        setItems(carrito.detalles);
+        await carritoRef.current.actualizarCantidad(idProducto, cantidadNueva);
+        sincronizar();
     };
-
-    const total = items.reduce(
-        (acc, item) => acc + precioConDescuento(item.producto) * item.cantidad,
-        0
-    );
-    const cantidadTotal = items.reduce((acc, item) => acc + item.cantidad, 0);
 
     return (
         <CarritoContext.Provider
             value={{
-                idCarrito,
-                items,
+                idCarrito: snapshot.idCarrito,
+                items: snapshot.items,
                 cargarCarritoCliente,
                 limpiarCarritoLocal,
                 agregarProducto,
                 quitarProducto,
                 actualizarCantidad,
-                total,
-                cantidadTotal,
+                total: snapshot.total,
+                cantidadTotal: snapshot.cantidadTotal,
             }}
         >
             {children}

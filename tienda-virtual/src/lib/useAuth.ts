@@ -1,28 +1,42 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import { Cliente } from "@/types";
+import { Sesion } from "@/models/Sesion";
+
+let snapshotCache: Cliente | null = null;
+let isCached = false;
+
+function subscribe(callback: () => void) {
+    const handleCambio = () => {
+        snapshotCache = Sesion.obtenerCliente();
+        isCached = true;
+        callback(); 
+    };
+
+    window.addEventListener("sesion-cambio", handleCambio);
+    return () => window.removeEventListener("sesion-cambio", handleCambio);
+}
+
+function getSnapshot(): Cliente | null {
+    if (!isCached) {
+        snapshotCache = Sesion.obtenerCliente();
+        isCached = true;
+    }
+    return snapshotCache;
+}
+
+function getServerSnapshot(): Cliente | null {
+    return null;
+}
 
 export function useAuth() {
-    const [cliente, setCliente] = useState<Cliente | null>(null);
-    const [cargando, setCargando] = useState(true);
-
-    useEffect(() => {
-        const guardado = localStorage.getItem("cliente");
-        if (guardado) {
-            try {
-                setCliente(JSON.parse(guardado));
-            } catch {
-                localStorage.removeItem("cliente");
-            }
-        }
-        setCargando(false);
+    const cliente = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+    const cargando = false;
+    
+    const logout = useCallback(() => {
+        Sesion.cerrar();
     }, []);
-
-    const logout = () => {
-        localStorage.removeItem("cliente");
-        setCliente(null);
-    };
 
     return { cliente, cargando, logout };
 }

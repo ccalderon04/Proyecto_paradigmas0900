@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import { registrarCliente } from "@/lib/authApi";
 import { ArrowLeft } from "lucide-react";
+import { Sesion } from "@/models/Sesion";
 
 export default function RegistroPage() {
     const router = useRouter();
@@ -47,7 +48,7 @@ export default function RegistroPage() {
                 contrasena,
             });
 
-            localStorage.setItem("cliente", JSON.stringify(cliente));
+            Sesion.iniciar(cliente);
             router.push("/");
         } catch (err) {
             setError("No se pudo crear la cuenta. El usuario o correo ya podrían estar registrados.");

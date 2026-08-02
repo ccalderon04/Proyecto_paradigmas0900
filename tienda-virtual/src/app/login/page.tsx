@@ -7,6 +7,7 @@ import Button from "@/components/Button";
 import { loginUsuario, obtenerClientePorUsuario } from "@/lib/authApi";
 import { useCarrito } from "@/context/carritocontext";
 import { ArrowLeft } from "lucide-react";
+import { Sesion } from "@/models/Sesion";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -27,7 +28,7 @@ export default function LoginPage() {
                 setError("Este usuario no tiene un perfil de cliente asociado.");
                 return;
             }
-            localStorage.setItem("cliente", JSON.stringify(cliente));
+            Sesion.iniciar(cliente);
             await cargarCarritoCliente(cliente.id_cliente);
             router.push("/");
         } catch (err) {
