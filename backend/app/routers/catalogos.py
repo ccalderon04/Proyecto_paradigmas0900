@@ -26,12 +26,12 @@ from app.schemas.catalogos import (
 router = APIRouter(tags=["Métodos de pago y descuentos"])
 
 
-@router.get("/metodos-pago", response_model=list[MetodoPagoRespuesta])
+@router.get("/metodos-pago/", response_model=list[MetodoPagoRespuesta])
 def listar_metodos_pago(db: Session = Depends(get_db)):
     return db.query(MetodoPago).filter(MetodoPago.activo == True).all()  # noqa: E712
 
 
-@router.get("/descuentos", response_model=list[DescuentoRespuesta])
+@router.get("/descuentos/", response_model=list[DescuentoRespuesta])
 def listar_descuentos(db: Session = Depends(get_db)):
     """Lista los descuentos activos (la vigencia por fecha se valida al aplicar, no aquí)."""
     return db.query(Descuento).filter(Descuento.activo == True).all()  # noqa: E712
@@ -45,7 +45,7 @@ def obtener_descuento(id_descuento: uuid.UUID, db: Session = Depends(get_db)):
     return descuento
 
 
-@router.post("/descuentos", response_model=DescuentoRespuesta, status_code=status.HTTP_201_CREATED)
+@router.post("/descuentos/", response_model=DescuentoRespuesta, status_code=status.HTTP_201_CREATED)
 def crear_descuento(datos: DescuentoCrear, db: Session = Depends(get_db)):
     """
     Las reglas tipo/valor y fechas ya se validaron en el schema

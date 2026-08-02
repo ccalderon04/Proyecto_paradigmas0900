@@ -22,7 +22,7 @@ $valorInventario = calcular_valor_inventario($productos);
 $productosStockBajo = filtrar_stock_bajo($productos, 5);
 $totalVentas = calcular_total_ventas($facturas);
 
-$tituloPagina = 'Dashboard';
+$tituloPagina = 'Panel de Control';
 $paginaActual = 'index.php';
 require __DIR__ . '/../src/views/partials/head.php';
 require __DIR__ . '/../src/views/partials/sidebar.php';

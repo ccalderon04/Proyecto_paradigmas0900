@@ -7,6 +7,7 @@ $menu = [
     'index.php' => 'Dashboard',
     'productos.php' => 'Productos',
     'categorias.php' => 'Categorías',
+    'descuentos.php' => 'Descuentos',
     'proveedores.php' => 'Proveedores',
     'compras.php' => 'Compras',
     'inventario.php' => 'Inventario',

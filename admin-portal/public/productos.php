@@ -4,6 +4,7 @@ Auth::requerirSesion();
 
 $servicio = new ProductoService($api);
 $categoriaService = new CategoriaService($api);
+$descuentoService = new DescuentoService($api);
 $error = null;
 $exito = null;
 $editando = null;
@@ -11,9 +12,11 @@ $editando = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($_POST['accion'] ?? '', ['crear', 'actualizar'])) {
     $datos = [
         'id_categoria' => $_POST['id_categoria'],
+        'id_descuento' => trim($_POST['id_descuento'] ?? '') ?: null,
         'nombre' => trim($_POST['nombre']),
         'descripcion' => trim($_POST['descripcion'] ?? ''),
         'stock' => (int) $_POST['stock'],
+        'cantidad' => trim($_POST['cantidad'] ?? '') !== '' ? (float) $_POST['cantidad'] : null,
         'u_medida' => trim($_POST['u_medida'] ?? '') ?: null,
         'precio' => (float) $_POST['precio'],
         'estado' => isset($_POST['estado']),
@@ -44,6 +47,9 @@ if (isset($_GET['editar'])) {
 
 $categorias = $categoriaService->listar();
 $categorias = $categorias['ok'] ? $categorias['data'] : [];
+
+$descuentos = $descuentoService->listar();
+$descuentos = $descuentos['ok'] ? $descuentos['data'] : [];
 
 $productos = $servicio->listar();
 $productos = $productos['ok'] ? $productos['data'] : [];
@@ -98,6 +104,21 @@ require __DIR__ . '/../src/views/partials/alerta.php';
                 <label for="u_medida">Unidad de medida</label>
                 <input type="text" id="u_medida" name="u_medida" placeholder="ej. unidad, par, kg" value="<?= htmlspecialchars($editando['u_medida'] ?? '') ?>">
             </div>
+            <div>
+                <label for="cantidad">Cantidad (presentación)</label>
+                <input type="number" step="0.01" min="0" id="cantidad" name="cantidad" placeholder="ej. 500" value="<?= htmlspecialchars($editando['cantidad'] ?? '') ?>">
+            </div>
+            <div>
+                <label for="id_descuento">Descuento (opcional)</label>
+                <select id="id_descuento" name="id_descuento">
+                    <option value="">Sin descuento</option>
+                    <?php foreach ($descuentos as $d): ?>
+                        <option value="<?= htmlspecialchars($d['id_descuento']) ?>" <?= ($editando['id_descuento'] ?? '') === $d['id_descuento'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($d['nombre']) ?> (<?= $d['tipo'] === 'porcentaje' ? $d['valor'] . '%' : 'L.' . $d['valor'] ?>)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             <div style="display:flex; align-items:end; gap:.4rem; padding-bottom:.5rem;">
                 <input type="checkbox" id="estado" name="estado" style="width:auto;" <?= ($editando['estado'] ?? true) ? 'checked' : '' ?>>
                 <label for="estado" style="margin:0;">Producto activo</label>
@@ -119,7 +140,7 @@ require __DIR__ . '/../src/views/partials/alerta.php';
 <div class="panel">
     <h2>Listado (<?= count($productos) ?>)</h2>
     <table>
-        <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th></th></tr></thead>
+        <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Descuento</th><th>Estado</th><th></th></tr></thead>
         <tbody>
         <?php foreach ($productos as $p): ?>
             <tr>
@@ -127,6 +148,7 @@ require __DIR__ . '/../src/views/partials/alerta.php';
                 <td><?= htmlspecialchars($nombresCategoria[$p['id_categoria']] ?? '—') ?></td>
                 <td><?= formatear_moneda($p['precio']) ?></td>
                 <td><span class="badge <?= $p['stock'] <= 5 ? 'badge--alerta' : 'badge--ok' ?>"><?= $p['stock'] ?></span></td>
+                <td><?= $p['descuento'] ? htmlspecialchars($p['descuento']['nombre']) : '—' ?></td>
                 <td><span class="badge <?= $p['estado'] ? 'badge--ok' : 'badge--off' ?>"><?= $p['estado'] ? 'Activo' : 'Inactivo' ?></span></td>
                 <td class="acciones">
                     <a class="btn btn--secondary btn--sm" href="productos.php?editar=<?= urlencode($p['id_producto']) ?>">Editar</a>
@@ -135,7 +157,7 @@ require __DIR__ . '/../src/views/partials/alerta.php';
             </tr>
         <?php endforeach; ?>
         <?php if (empty($productos)): ?>
-            <tr><td colspan="6" class="texto-apagado">No hay productos registrados.</td></tr>
+            <tr><td colspan="7" class="texto-apagado">No hay productos registrados.</td></tr>
         <?php endif; ?>
         </tbody>
     </table>
