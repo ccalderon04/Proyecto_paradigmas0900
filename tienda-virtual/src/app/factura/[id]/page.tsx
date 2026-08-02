@@ -66,18 +66,36 @@ export default function FacturaPage() {
                         <span>Fecha</span>
                         <span>{new Date(factura.fecha).toLocaleDateString("es-HN")}</span>
                     </div>
-                    <div className="flex justify-between text-neutral-light">
-                        <span>Subtotal</span>
-                        <span>{formatMoney(factura.subtotal)}</span>
-                    </div>
-                    <div className="flex justify-between text-neutral-light">
-                        <span>Impuestos</span>
-                        <span>{formatMoney(factura.impuestos)}</span>
-                    </div>
-                    <div className="flex justify-between font-bold text-lg border-t border-white/10 pt-3 mt-2">
-                        <span>Total</span>
-                        <span className="text-primary">{formatMoney(factura.total)}</span>
-                    </div>
+
+                    <div className="border-t border-white/10 pt-4 flex flex-col gap-2 mt-2">
+                        <div className="flex justify-between font-bold text-lg">
+                            <span>Productos</span>
+                            <span>Precio</span>
+                        </div>
+                        {factura.detalles.map((detalle) => (
+        <div key={detalle.id_detalle} className="flex justify-between text-neutral-light">
+            <span>
+                {detalle.cantidad}x {detalle.producto.nombre}
+            </span>
+            <span>{formatMoney(detalle.total)}</span>
+        </div>
+    ))}
+
+    <div className="border-t border-white/10 pt-4 flex flex-col gap-2 mt-2">
+        <div className="flex justify-between text-neutral-light">
+            <span>Subtotal</span>
+            <span>{formatMoney(factura.subtotal)}</span>
+        </div>
+        <div className="flex justify-between text-neutral-light">
+            <span>Impuestos</span>
+            <span>{formatMoney(factura.impuestos)}</span>
+        </div>
+        <div className="flex justify-between font-bold text-lg border-t border-white/10 pt-3 mt-2">
+            <span>Total</span>
+            <span className="text-primary">{formatMoney(factura.total)}</span>
+        </div>
+    </div>
+</div>
                 </div>
 
                 <Link href="/productos">

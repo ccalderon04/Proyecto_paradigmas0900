@@ -15,8 +15,9 @@ import { MetodoPago } from "@/types";
 import { Truck, Store } from "lucide-react";
 import { tieneOfertaActiva, precioConDescuento } from "@/lib/pricing";
 import { obtenerDireccionesPorCliente } from "@/lib/direccionApi";
-import { Direccion } from "@/types";
-import { MapPin, Plus } from "lucide-react";
+import { obtenerTarjetasPorCliente } from "@/lib/tarjetaApi";
+import { Direccion, Tarjeta } from "@/types";
+import { MapPin, Plus, CreditCard } from "lucide-react";
 
 
 export default function CheckoutPage() {
@@ -24,8 +25,10 @@ export default function CheckoutPage() {
     const { cliente, cargando: cargandoAuth } = useAuth();
     const router = useRouter();
 
-    const [direcciones, setDirecciones] = useState<Direccion[]>([]);
-    const [direccionSeleccionada, setDireccionSeleccionada] = useState<string | null>(null);
+const [direcciones, setDirecciones] = useState<Direccion[]>([]);
+const [direccionSeleccionada, setDireccionSeleccionada] = useState<string | null>(null);
+const [tarjetas, setTarjetas] = useState<Tarjeta[]>([]);
+const [tarjetaSeleccionada, setTarjetaSeleccionada] = useState<string | null>(null);
 
 
     const [metodosPago, setMetodosPago] = useState<MetodoPago[]>([]);
@@ -34,15 +37,29 @@ export default function CheckoutPage() {
     const [procesando, setProcesando] = useState(false);
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        if (!cliente || !entregaDomicilio) return;
-        obtenerDireccionesPorCliente(cliente.id_cliente)
-        .then((data) => {
+const metodoEsTarjeta = metodosPago
+    .find((m) => m.id_metodo_pago === metodoSeleccionado)
+    ?.nombre.toLowerCase().includes("tarjeta");
+
+useEffect(() => {
+    if (!cliente || !entregaDomicilio) return;
+    obtenerDireccionesPorCliente(cliente.id_cliente)
+    .then((data) => {
         setDirecciones(data);
         if (data.length > 0) setDireccionSeleccionada(data[0].id_direccion);
     })
     .catch((err) => console.error("Error cargando direcciones:", err));
 }, [cliente, entregaDomicilio]);
+
+useEffect(() => {
+    if (!cliente || !metodoEsTarjeta) return;
+    obtenerTarjetasPorCliente(cliente.id_cliente)
+    .then((data) => {
+        setTarjetas(data);
+        if (data.length > 0) setTarjetaSeleccionada(data[0].id_tarjeta);
+    })
+    .catch((err) => console.error("Error cargando tarjetas:", err));
+}, [cliente, metodoEsTarjeta]);
 
     useEffect(() => {
         obtenerMetodosPago()
@@ -124,26 +141,57 @@ export default function CheckoutPage() {
                 <div className="col-span-2 flex flex-col gap-6">
                     <div className="bg-secondary rounded-xl p-6 text-white">
                         <h2 className="font-headline text-lg font-bold mb-4">Tipo de Entrega</h2>
-                        <div className="flex gap-4">
-                            <button
-                                onClick={() => setEntregaDomicilio(true)}
-                                className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-lg border ${
-                                    entregaDomicilio ? "border-primary bg-primary/10" : "border-white/10"
-                                }`}
-                            >
+                            <div className="flex gap-4 mb-4">
+                                <button
+                                    onClick={() => setEntregaDomicilio(true)}
+                                    className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-lg border ${
+                                        entregaDomicilio ? "border-primary bg-primary/10" : "border-white/10"
+                                    }`}
+                                >
                                 <Truck size={20} />
-                                <span className="text-sm font-label">Entrega a domicilio</span>
-                            </button>
-                            <button
-                                onClick={() => setEntregaDomicilio(false)}
-                                className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-lg border ${
-                                    !entregaDomicilio ? "border-primary bg-primary/10" : "border-white/10"
+                                    <span className="text-sm font-label">Entrega a domicilio</span>
+                                </button>
+                                <button
+                                    onClick={() => setEntregaDomicilio(false)}
+                                    className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-lg border ${
+                                        !entregaDomicilio ? "border-primary bg-primary/10" : "border-white/10"
+                                    }`}
+                                >
+                                    <Store size={20} />
+                                    <span className="text-sm font-label">Recoger en tienda</span>
+                                </button>
+                            </div>
+
+                {entregaDomicilio && (
+                <div className="border-t border-white/10 pt-4">
+                <p className="text-sm font-label text-neutral-light mb-3">Selecciona una dirección</p>
+                {direcciones.length === 0 ? (
+                <Link href="/mis-direcciones">
+                    <Button variant="outlined" className="w-full flex items-center justify-center gap-2">
+                        <Plus size={16} /> Agregar Dirección
+                    </Button>
+                </Link>
+                    ) : (
+                        <div className="flex flex-col gap-2">
+                            {direcciones.map((dir) => (
+                                <button
+                                key={dir.id_direccion}
+                                onClick={() => setDireccionSeleccionada(dir.id_direccion)}
+                                    className={`flex items-start gap-3 text-left p-3 rounded-lg border ${
+                                direccionSeleccionada === dir.id_direccion ? "border-primary bg-primary/10" : "border-white/10"
                                 }`}
-                            >
-                                <Store size={20} />
-                                <span className="text-sm font-label">Recoger en tienda</span>
-                            </button>
+                                >
+                                    <MapPin size={16} className="text-primary mt-1 flex-shrink-0" />
+                                    <span className="text-sm">{dir.calle}, {dir.colonia}</span>
+                                </button>
+                                ))}
+                                <Link href="/mis-direcciones" className="text-primary text-sm mt-1 hover:underline">
+                                    + Agregar otra dirección
+                                </Link>
+                            </div>
+                            )}
                         </div>
+                        )}
                     </div>
 
                     <div className="bg-secondary rounded-xl p-6 text-white">
@@ -164,6 +212,38 @@ export default function CheckoutPage() {
                             ))}
                         </div>
                     </div>
+
+
+                {metodoEsTarjeta && (
+        <div className="bg-secondary rounded-xl p-6 text-white">
+            <h2 className="font-headline text-lg font-bold mb-4">Selecciona una Tarjeta</h2>
+                {tarjetas.length === 0 ? (
+                <Link href="/mis-tarjetas">
+                    <Button variant="outlined" className="w-full flex items-center justify-center gap-2">
+                        <Plus size={16} /> Agregar Tarjeta
+                    </Button>
+                </Link>
+                ) : (
+                    <div className="flex flex-col gap-2">
+                    {tarjetas.map((t) => (
+                        <button
+                            key={t.id_tarjeta}
+                            onClick={() => setTarjetaSeleccionada(t.id_tarjeta)}
+                            className={`flex items-center gap-3 text-left p-3 rounded-lg border ${
+                            tarjetaSeleccionada === t.id_tarjeta ? "border-primary bg-primary/10" : "border-white/10"
+                            }`}
+                        >
+                            <CreditCard size={16} className="text-primary" />
+                            <span className="text-sm">{t.marca} •••• {t.ultimos_digitos}</span>
+                        </button>
+                        ))}
+                        <Link href="/mis-tarjetas" className="text-primary text-sm mt-1 hover:underline">
+                            + Agregar otra tarjeta
+                        </Link>
+                        </div>
+                    )}
+                    </div>
+                )}
                 </div>
 
                 <div className="bg-secondary rounded-xl p-6 text-white h-fit">

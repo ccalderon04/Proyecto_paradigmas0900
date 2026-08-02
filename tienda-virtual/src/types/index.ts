@@ -74,9 +74,16 @@ export interface Carrito {
     subtotal: string;
 }
 
+export interface ProductoResumenFactura {
+    id_producto: string;
+    nombre: string;
+    precio: string;
+}
+
 export interface DetalleFactura {
     id_detalle: string;
     id_producto: string;
+    producto: ProductoResumenFactura;
     cantidad: number;
     id_descuento: string | null;
     total: string;
@@ -96,32 +103,41 @@ export interface Factura {
 }
 
 export interface ProductoDescuento {
-  id_descuento: string;
-  nombre: string;
-  valor: string;
-  tipo: "porcentaje" | "monto_fijo";
-  fecha_inicio: string;
-  fecha_fin: string;
-  activo: boolean;
+    id_descuento: string;
+    nombre: string;
+    valor: string;
+    tipo: "porcentaje" | "monto_fijo";
+    fecha_inicio: string;
+    fecha_fin: string;
+    activo: boolean;
 }
-
 export interface Departamento {
-  id_departamento: string;
-  nombre: string;
+    id_departamento: string;
+    nombre: string;
 }
 
 export interface Ciudad {
-  id_ciudad: string;
-  nombre: string;
+    id_ciudad: string;
+    nombre: string;
 }
 
 export interface Direccion {
-  id_direccion: string;
-  id_cliente: string;
-  id_departamento: string;
-  id_ciudad: string;
-  calle: string;
-  colonia: string;
-  lat: string | null;
-  long: string | null;
+    id_direccion: string;
+    id_cliente: string;
+    id_departamento: string;
+    id_ciudad: string;
+    calle: string;
+    colonia: string;
+    lat: string | null;
+    long: string | null;
+}
+
+export interface Tarjeta {
+    id_tarjeta: string;
+    id_cliente: string;
+    titular: string;
+    ultimos_digitos: string;
+    marca: "Visa" | "Mastercard" | "Amex";
+    fecha_expiracion: string;
+    estado: boolean;
 }

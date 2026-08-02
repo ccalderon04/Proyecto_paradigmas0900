@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { ShoppingCart, User, FileText, LogOut, MapPin } from "lucide-react";
+import { ShoppingCart, User, FileText, LogOut, MapPin, CreditCard } from "lucide-react";
 import { useCarrito } from "@/context/carritocontext";
 import { useAuth } from "@/lib/useAuth";
 
@@ -83,12 +83,11 @@ export default function Navbar() {
                 >
                   <FileText size={16} /> Mis Facturas
                 </Link>
-                <Link
-                  href="/mis-direcciones"
-                  onClick={() => setMenuAbierto(false)}
-                  className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/5"
-                  >
+                <Link href="/mis-direcciones" onClick={() => setMenuAbierto(false)} className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/5">
                   <MapPin size={16} /> Mis Direcciones
+                </Link>
+                <Link href="/mis-tarjetas" onClick={() => setMenuAbierto(false)} className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/5">
+                  <CreditCard size={16} /> Métodos de Pago
                 </Link>
                 <button
                   onClick={handleLogout}

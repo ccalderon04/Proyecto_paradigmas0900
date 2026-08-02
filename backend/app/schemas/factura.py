@@ -8,23 +8,25 @@ from pydantic import BaseModel, ConfigDict
 
 
 class FacturaGenerar(BaseModel):
-    """
-    Lo que el cliente envía para generar una factura a partir de su
-    carrito (compra simulada). El carrito ya tiene sus líneas — aquí
-    solo se indica cómo pagar y, opcionalmente, qué descuentos aplicar
-    por producto.
-    """
-
     id_carrito: uuid.UUID
     id_metodo_pago: uuid.UUID
-    # Mapa opcional: id_producto -> id_descuento a aplicar en esa línea.
-    # Si un producto del carrito no aparece aquí, esa línea no lleva descuento.
     descuentos_por_producto: dict[uuid.UUID, uuid.UUID] = {}
+
+
+class ProductoResumenFactura(BaseModel):
+    """Versión mínima del producto, solo para mostrar en el detalle de una factura."""
+
+    id_producto: uuid.UUID
+    nombre: str
+    precio: Decimal
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class DetalleFacturaRespuesta(BaseModel):
     id_detalle: uuid.UUID
     id_producto: uuid.UUID
+    producto: ProductoResumenFactura
     cantidad: int
     id_descuento: uuid.UUID | None
     total: Decimal
