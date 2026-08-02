@@ -31,6 +31,9 @@ from app.routers import (
     productos,
     proveedores,
     usuarios,
+    departamentos,
+    ciudades,
+    tarjetas
 )
 
 
@@ -89,8 +92,6 @@ app.include_router(facturas.router)
 app.include_router(proveedores.router)
 app.include_router(compras.router)
 app.include_router(catalogos.router)
-
-from app.routers import departamentos, ciudades
-
 app.include_router(departamentos.router, prefix="/departamentos", tags=["Departamentos"])
 app.include_router(ciudades.router, prefix="/ciudades", tags=["Ciudades"])
+app.include_router(tarjetas.router, prefix="/tarjetas", tags=["Tarjetas"])

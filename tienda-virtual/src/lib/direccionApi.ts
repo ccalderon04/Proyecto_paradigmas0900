@@ -1,24 +1,24 @@
 import { apiFetch } from "./apiClient";
-import { Departamento, Ciudad } from "@/types";
+import { Direccion } from "@/types";
 
-export const obtenerDepartamentos = () => apiFetch<Departamento[]>("/departamentos/");
-export const obtenerCiudades = () => apiFetch<Ciudad[]>("/ciudades/");
+export interface DireccionCreate {
+  id_cliente: string;
+  id_departamento: string;
+  id_ciudad: string;
+  calle: string;
+  colonia: string;
+  lat?: string | null;
+  long?: string | null;
+}
 
-export const crearCiudad = (nombre: string) =>
-  apiFetch<Ciudad>("/ciudades/", {
+export const obtenerDireccionesPorCliente = (idCliente: string) =>
+  apiFetch<Direccion[]>(`/direcciones/cliente/${idCliente}`);
+
+export const crearDireccion = (data: DireccionCreate) =>
+  apiFetch<Direccion>("/direcciones/", {
     method: "POST",
-    body: JSON.stringify({ nombre }),
+    body: JSON.stringify(data),
   });
 
-export async function obtenerOCrearCiudad(nombreEscrito: string): Promise<string> {
-  const nombreLimpio = nombreEscrito.trim();
-  const ciudades = await obtenerCiudades();
-
-  const existente = ciudades.find(
-    (c) => c.nombre.trim().toLowerCase() === nombreLimpio.toLowerCase()
-  );
-  if (existente) return existente.id_ciudad;
-
-  const nueva = await crearCiudad(nombreLimpio);
-  return nueva.id_ciudad;
-}
+export const eliminarDireccion = (id: string) =>
+  apiFetch<void>(`/direcciones/${id}`, { method: "DELETE" });

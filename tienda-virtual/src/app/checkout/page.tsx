@@ -14,6 +14,9 @@ import { crearFactura } from "@/lib/facturaApi";
 import { MetodoPago } from "@/types";
 import { Truck, Store } from "lucide-react";
 import { tieneOfertaActiva, precioConDescuento } from "@/lib/pricing";
+import { obtenerDireccionesPorCliente } from "@/lib/direccionApi";
+import { Direccion } from "@/types";
+import { MapPin, Plus } from "lucide-react";
 
 
 export default function CheckoutPage() {
@@ -21,11 +24,25 @@ export default function CheckoutPage() {
     const { cliente, cargando: cargandoAuth } = useAuth();
     const router = useRouter();
 
+    const [direcciones, setDirecciones] = useState<Direccion[]>([]);
+    const [direccionSeleccionada, setDireccionSeleccionada] = useState<string | null>(null);
+
+
     const [metodosPago, setMetodosPago] = useState<MetodoPago[]>([]);
     const [metodoSeleccionado, setMetodoSeleccionado] = useState<string | null>(null);
     const [entregaDomicilio, setEntregaDomicilio] = useState(true);
     const [procesando, setProcesando] = useState(false);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        if (!cliente || !entregaDomicilio) return;
+        obtenerDireccionesPorCliente(cliente.id_cliente)
+        .then((data) => {
+        setDirecciones(data);
+        if (data.length > 0) setDireccionSeleccionada(data[0].id_direccion);
+    })
+    .catch((err) => console.error("Error cargando direcciones:", err));
+}, [cliente, entregaDomicilio]);
 
     useEffect(() => {
         obtenerMetodosPago()
