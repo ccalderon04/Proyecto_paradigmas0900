@@ -41,6 +41,7 @@ class ProductoActualizar(BaseModel):
 class ProductoRespuesta(ProductoBase):
     id_producto: uuid.UUID
     fecha_registro: date
+    descuento: DescuentoRespuesta | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
