@@ -1,4 +1,3 @@
-// src/types/index.ts
 export interface Categoria {
     id_categoria: string;
     nombre: string;
@@ -15,11 +14,13 @@ export interface Producto {
     nombre: string;
     descripcion: string | null;
     stock: number;
+    cantidad: string | null;
     u_medida: string | null;
     precio: string;
     estado: boolean;
     fecha_registro: string;
     categoria?: ProductoCategoria;
+    descuento?: ProductoDescuento | null;
 }
 
 export interface MetodoPago {
@@ -91,4 +92,14 @@ export interface Factura {
     id_metodo_pago: string;
     estado: boolean;
     detalles: DetalleFactura[];
+}
+
+export interface ProductoDescuento {
+  id_descuento: string;
+  nombre: string;
+  valor: string;
+  tipo: "porcentaje" | "monto_fijo";
+  fecha_inicio: string;
+  fecha_fin: string;
+  activo: boolean;
 }

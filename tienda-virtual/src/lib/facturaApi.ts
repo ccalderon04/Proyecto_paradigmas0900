@@ -1,4 +1,3 @@
-// src/lib/facturaApi.ts
 import { apiFetch } from "./apiClient";
 import { Factura } from "@/types";
 
@@ -16,3 +15,6 @@ export const crearFactura = (data: FacturaCreate) =>
 
 export const obtenerFacturaPorId = (id: string) =>
     apiFetch<Factura>(`/facturas/${id}`);
+
+export const obtenerFacturasPorCliente = (idCliente: string) =>
+    apiFetch<Factura[]>(`/facturas/cliente/${idCliente}`);

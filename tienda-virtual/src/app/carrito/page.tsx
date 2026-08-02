@@ -84,7 +84,7 @@ export default function CarritoPage() {
                 </div>
                 <div className="flex justify-between font-bold text-lg border-t border-white/10 pt-4 mb-6">
                     <span>Total</span>
-                    <span className="text-primary">${(total * 1.15).toFixed(2)}</span>
+                    <span className="text-primary">L. {(total * 1.15).toFixed(2)}</span>
                 </div>
                 <Button variant="primary" className="w-full" onClick={() => router.push("/checkout")}>
                     Proceder al Pago

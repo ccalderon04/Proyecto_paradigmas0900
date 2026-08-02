@@ -1,4 +1,3 @@
-// src/app/login/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -6,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import { loginUsuario, obtenerClientePorUsuario } from "@/lib/authApi";
+import { ArrowLeft } from "lucide-react";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -18,16 +18,13 @@ export default function LoginPage() {
         e.preventDefault();
         setError("");
         setEnviando(true);
-
         try {
             const usuario = await loginUsuario({ nombre: nombreUsuario, contrasena });
             const cliente = await obtenerClientePorUsuario(usuario.id_usuario);
-
             if (!cliente) {
             setError("Este usuario no tiene un perfil de cliente asociado.");
             return;
             }
-
             localStorage.setItem("cliente", JSON.stringify(cliente));
             router.push("/");
         } catch (err) {
@@ -39,48 +36,58 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen bg-white flex items-center justify-center px-4">
-            <div className="bg-neutral text-white rounded-2xl p-10 w-full max-w-md">
-            <h1 className="font-headline text-3xl font-bold mb-2">Bienvenido de vuelta</h1>
-            <p className="text-neutral-light mb-8">Inicia sesión para continuar.</p>
+            <div className="bg-neutral text-white rounded-2xl p-10 w-full max-w-md relative">
+            <button
+                onClick={() => router.push("/")}
+                className="absolute top-6 left-6 flex items-center gap-1 text-neutral-light hover:text-white text-sm transition-colors"
+            >
+                <ArrowLeft size={16} />
+                Volver atrás
+            </button>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label className="text-sm font-label block mb-1">Nombre de usuario</label>
-                    <input
-                        type="text"
-                        value={nombreUsuario}
-                        onChange={(e) => setNombreUsuario(e.target.value)}
-                        placeholder="tu_usuario"
-                        className="w-full bg-secondary rounded-lg px-4 py-3 text-white placeholder:text-neutral-light outline-none"
-                        required
-                    />
-                </div>
+            <div className="mt-8">
+                <h1 className="font-headline text-3xl font-bold mb-2">Bienvenido de vuelta</h1>
+                <p className="text-neutral-light mb-8">Inicia sesión para continuar.</p>
 
-                <div>
-                    <label className="text-sm font-label block mb-1">Contraseña</label>
-                    <input
-                        type="password"
-                        value={contrasena}
-                        onChange={(e) => setContrasena(e.target.value)}
-                        placeholder="Mínimo 6 caracteres"
-                        className="w-full bg-secondary rounded-lg px-4 py-3 text-white placeholder:text-neutral-light outline-none"
-                        required
-                    />
-                </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="text-sm font-label block mb-1">Nombre de usuario</label>
+                        <input
+                            type="text"
+                            value={nombreUsuario}
+                            onChange={(e) => setNombreUsuario(e.target.value)}
+                            placeholder="tu_usuario"
+                            className="w-full bg-secondary rounded-lg px-4 py-3 text-white placeholder:text-neutral-light outline-none"
+                            required
+                        />
+                    </div>
 
-                {error && <p className="text-primary text-sm">{error}</p>}
+                    <div>
+                        <label className="text-sm font-label block mb-1">Contraseña</label>
+                        <input
+                            type="password"
+                            value={contrasena}
+                            onChange={(e) => setContrasena(e.target.value)}
+                            placeholder="Mínimo 6 caracteres"
+                            className="w-full bg-secondary rounded-lg px-4 py-3 text-white placeholder:text-neutral-light outline-none"
+                            required
+                        />
+                    </div>
 
-                <Button type="submit" variant="primary" className="w-full">
-                    {enviando ? "Ingresando..." : "Iniciar Sesión"}
-                </Button>
-            </form>
+                    {error && <p className="text-primary text-sm">{error}</p>}
 
-            <p className="text-center text-sm text-neutral-light mt-6">
-                ¿No tienes cuenta?{" "}
-                <Link href="/registro" className="text-primary hover:underline">
-                    Regístrate
-                </Link>
-            </p>
+                    <Button type="submit" variant="primary" className="w-full">
+                        {enviando ? "Ingresando..." : "Iniciar Sesión"}
+                    </Button>
+                </form>
+
+                <p className="text-center text-sm text-neutral-light mt-6">
+                    ¿No tienes cuenta?{" "}
+                    <Link href="/registro" className="text-primary hover:underline">
+                        Regístrate
+                    </Link>
+                </p>
+            </div>
             </div>
         </div>
     );

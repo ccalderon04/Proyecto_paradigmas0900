@@ -6,10 +6,11 @@ export default function Footer() {
                 <p className="text-neutral-light text-xs">Grupo 1 - Paradigmas de la programación</p>
             </div>
             <div className="flex gap-6 text-neutral-light">
-                <span>Privacidad</span>
-                <span>Términos</span>
-                <span>Contacto</span>
-                <span>Envíos</span>
+                <span>Brayan Natanael</span>
+                <span>•</span>
+                <span>Christian Velasquez</span>
+                <span>•</span>
+                <span>Kevin Romero</span>
             </div>
         </footer>
     );

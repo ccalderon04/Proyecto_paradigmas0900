@@ -1,4 +1,3 @@
-// src/app/checkout/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -14,6 +13,8 @@ import { crearOCargarCarrito, agregarProductoCarrito } from "@/lib/carritoApi";
 import { crearFactura } from "@/lib/facturaApi";
 import { MetodoPago } from "@/types";
 import { Truck, Store } from "lucide-react";
+import { tieneOfertaActiva, precioConDescuento } from "@/lib/pricing";
+
 
 export default function CheckoutPage() {
     const { items, total, vaciarCarrito } = useCarrito();
@@ -42,34 +43,39 @@ export default function CheckoutPage() {
     }, [cargandoAuth, cliente, router]);
 
     const handleConfirmarCompra = async () => {
-        if (!cliente || !metodoSeleccionado) return;
-        setProcesando(true);
-        setError("");
+    if (!cliente || !metodoSeleccionado) return;
+    setProcesando(true);
+    setError("");
 
-        try {
-            // 1. Crea (o recupera) el carrito real del cliente en el backend
-            const carrito = await crearOCargarCarrito(cliente.id_cliente);
+    try {
+        const carrito = await crearOCargarCarrito(cliente.id_cliente);
 
-            // 2. Agrega cada producto del carrito local al carrito del backend
-            for (const item of items) {
-            await agregarProductoCarrito(carrito.id_carrito, item.producto.id_producto, item.cantidad);
-            }
-
-            // 3. Genera la factura a partir de ese carrito
-            const factura = await crearFactura({
-            id_carrito: carrito.id_carrito,
-            id_metodo_pago: metodoSeleccionado,
-            });
-
-            vaciarCarrito();
-            router.push(`/factura/${factura.id_factura}`);
-        } catch (err) {
-            const mensaje = err instanceof Error ? err.message : "Error desconocido";
-            setError(`No se pudo procesar la compra: ${mensaje}`);
-        } finally {
-            setProcesando(false);
+    for (const item of items) {
+        await agregarProductoCarrito(carrito.id_carrito, item.producto.id_producto, item.cantidad);
+    }
+    
+    const descuentosPorProducto: Record<string, string> = {};
+    items.forEach((item) => {
+        if (tieneOfertaActiva(item.producto) && item.producto.descuento) {
+        descuentosPorProducto[item.producto.id_producto] = item.producto.descuento.id_descuento;
         }
-    };
+    });
+
+    const factura = await crearFactura({
+        id_carrito: carrito.id_carrito,
+        id_metodo_pago: metodoSeleccionado,
+        descuentos_por_producto: descuentosPorProducto,
+    });
+
+    vaciarCarrito();
+    router.push(`/factura/${factura.id_factura}`);
+    } catch (err) {
+    const mensaje = err instanceof Error ? err.message : "Error desconocido";
+    setError(`No se pudo procesar la compra: ${mensaje}`);
+    } finally {
+    setProcesando(false);
+    }
+};
 
     if (cargandoAuth) return null;
 
@@ -149,21 +155,21 @@ export default function CheckoutPage() {
                         {items.map((item) => (
                             <div key={item.producto.id_producto} className="flex justify-between">
                                 <span>{item.producto.nombre} x{item.cantidad}</span>
-                                <span>${(parseFloat(item.producto.precio) * item.cantidad).toFixed(2)}</span>
+                                <span>L {(precioConDescuento(item.producto) * item.cantidad).toFixed(2)}</span>
                             </div>
                         ))}
                     </div>
                     <div className="flex justify-between text-sm text-neutral-light mb-2 border-t border-white/10 pt-4">
                         <span>Subtotal</span>
-                        <span>${total.toFixed(2)}</span>
+                        <span>L.{total.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm text-neutral-light mb-4">
                         <span>Impuestos</span>
-                        <span>${impuestos.toFixed(2)}</span>
+                        <span>L.{impuestos.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between font-bold text-lg mb-6">
                         <span>Total</span>
-                        <span className="text-primary">${totalFinal.toFixed(2)}</span>
+                        <span className="text-primary">L. {totalFinal.toFixed(2)}</span>
                     </div>
 
                     {error && <p className="text-primary text-sm mb-4">{error}</p>}

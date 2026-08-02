@@ -1,4 +1,3 @@
-// src/app/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -21,7 +20,6 @@ export default function Home() {
   useEffect(() => {
     obtenerProductos()
       .then((data) => {
-        // Ordena por fecha de registro, más reciente primero, y toma los últimos 4
         const ordenados = [...data].sort(
           (a, b) => new Date(b.fecha_registro).getTime() - new Date(a.fecha_registro).getTime()
         );
@@ -40,17 +38,16 @@ export default function Home() {
     <>
       <Navbar />
 
-      {/* Hero */}
       <section className="bg-neutral text-white px-8 py-16">
         <div className="max-w-lg">
-          <span className="inline-block bg-primary/20 text-primary text-xs font-label px-3 py-1 rounded-full mb-4">
+          <span className="inline-block bg-tertiary/20 text-tertiary text-xs font-label px-3 py-1 rounded-full mb-4">
             OFERTA ESPECIAL
           </span>
           <h1 className="font-headline text-4xl font-bold mb-4">
             Potencia tu Rendimiento
           </h1>
           <p className="text-neutral-light mb-6">
-            Alcanza tus metas con nuestra nueva línea de suplementos de alta pureza.
+            Alcanza tus metas con nuestra linea de suplementos de alta calidad.
             Formulación avanzada para resultados reales.
           </p>
           <Link href="/ofertas">
@@ -59,7 +56,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Artículos recomendados */}
       <section className="bg-white px-8 py-16">
         <h2 className="font-headline text-2xl font-bold text-secondary mb-8">
           Artículos Recomendados
@@ -77,7 +73,7 @@ export default function Home() {
                 </div>
               </Link>
               <div className="flex items-center justify-between p-4">
-                <span className="font-bold text-primary">L. cd{formatMoney(producto.precio)}</span>
+                <span className="font-bold text-primary">{formatMoney(producto.precio)}</span>
                 <button
                   onClick={() => agregarProducto(producto)}
                   className="bg-primary p-2 rounded-lg hover:bg-primary/90 transition-colors"
@@ -89,7 +85,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Explora Categorías */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="font-headline text-2xl font-bold text-secondary">
             Explora Categorías

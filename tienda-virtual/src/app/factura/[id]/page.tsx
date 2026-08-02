@@ -1,4 +1,3 @@
-// src/app/factura/[id]/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -69,15 +68,15 @@ export default function FacturaPage() {
                     </div>
                     <div className="flex justify-between text-neutral-light">
                         <span>Subtotal</span>
-                        <span>${formatMoney(factura.subtotal)}</span>
+                        <span>{formatMoney(factura.subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-neutral-light">
                         <span>Impuestos</span>
-                        <span>${formatMoney(factura.impuestos)}</span>
+                        <span>{formatMoney(factura.impuestos)}</span>
                     </div>
                     <div className="flex justify-between font-bold text-lg border-t border-white/10 pt-3 mt-2">
                         <span>Total</span>
-                        <span className="text-primary">${formatMoney(factura.total)}</span>
+                        <span className="text-primary">{formatMoney(factura.total)}</span>
                     </div>
                 </div>
 

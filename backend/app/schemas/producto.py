@@ -1,5 +1,6 @@
 """Schemas Pydantic de `producto`."""
 
+from typing import Optional
 import uuid
 from datetime import date
 from decimal import Decimal
@@ -14,6 +15,7 @@ class ProductoBase(BaseModel):
     nombre: str
     descripcion: str | None = None
     stock: int = Field(ge=0, default=0)
+    cantidad: Optional[Decimal] = None
     u_medida: str | None = None
     precio: Decimal = Field(gt=0)
     estado: bool = True
@@ -28,6 +30,7 @@ class ProductoActualizar(BaseModel):
     nombre: str | None = None
     descripcion: str | None = None
     stock: int | None = Field(ge=0, default=None)
+    cantidad: Optional[Decimal] | None = None
     u_medida: str | None = None
     precio: Decimal | None = Field(gt=0, default=None)
     estado: bool | None = None

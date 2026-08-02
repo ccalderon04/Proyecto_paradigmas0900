@@ -1,4 +1,3 @@
-// src/lib/categoriasApi.ts
 import { apiFetch } from "./apiClient";
 import { Categoria } from "@/types";
 

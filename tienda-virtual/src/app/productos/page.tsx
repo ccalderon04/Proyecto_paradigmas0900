@@ -1,4 +1,3 @@
-// src/app/productos/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -106,7 +105,7 @@ export default function ProductosPage() {
                                 </div>
                             </Link>
                             <div className="flex items-center justify-between p-4">
-                                <span className="font-bold text-primary">${formatMoney(producto.precio)}</span>
+                                <span className="font-bold text-primary">{formatMoney(producto.precio)}</span>
                                 <button
                                     onClick={() => agregarProducto(producto)}
                                     className="bg-primary p-2 rounded-lg hover:bg-primary/90 transition-colors"

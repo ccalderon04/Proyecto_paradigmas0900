@@ -1,4 +1,3 @@
-// src/lib/productosApi.ts
 import { apiFetch } from "./apiClient";
 import { Producto } from "@/types";
 

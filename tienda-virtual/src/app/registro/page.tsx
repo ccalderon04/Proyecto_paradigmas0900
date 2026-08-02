@@ -1,4 +1,3 @@
-// src/app/registro/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -6,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import { registrarCliente } from "@/lib/authApi";
+import { ArrowLeft } from "lucide-react";
 
 export default function RegistroPage() {
     const router = useRouter();
@@ -48,8 +48,17 @@ export default function RegistroPage() {
 
     return (
         <div className="min-h-screen bg-white flex items-center justify-center px-4 py-10">
-            <div className="bg-neutral text-white rounded-2xl p-10 w-full max-w-md">
+            <div className="bg-neutral text-white rounded-2xl p-10 w-full max-w-md relative">
+            <button
+                onClick={() => router.back()}
+                className="absolute top-6 left-6 flex items-center gap-1 text-neutral-light hover:text-white text-sm transition-colors"
+            >
+                <ArrowLeft size={16} />
+                Volver atrás
+            </button>
+            <div className="mt-8">  
             <h1 className="font-headline text-3xl font-bold mb-2">Únete a la Élite</h1>
+            
             <p className="text-neutral-light mb-8">Rendimiento sofisticado al alcance de tu mano.</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -126,6 +135,7 @@ export default function RegistroPage() {
                     Inicia sesión
                 </Link>
             </p>
+            </div>
             </div>
         </div>
     );

@@ -1,14 +1,18 @@
-// src/components/Navbar.tsx
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ShoppingCart, User } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { ShoppingCart, User, FileText, LogOut } from "lucide-react";
 import { useCarrito } from "@/context/carritocontext";
+import { useAuth } from "@/lib/useAuth";
 
 export default function Navbar() {
   const { cantidadTotal } = useCarrito();
+  const { cliente } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   const links = [
     { href: "/", label: "Inicio" },
@@ -21,25 +25,38 @@ export default function Navbar() {
     return pathname.startsWith(href);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("cliente");
+    setMenuAbierto(false);
+    router.push("/");
+    router.refresh();
+  };
+
   return (
-    <header className="bg-neutral text-white px-8 py-4 flex items-center justify-between">
-      <Link href="/" className="font-headline text-xl font-bold text-primary">
-        ELITE SUPPS
+    <header className="bg-neutral text-white px-8 py-4 grid grid-cols-3 items-center relative">
+      <Link href="/" className="font-headline text-xl font-bold text-primary justify-self-start">
+        TIENDA DEPORTIVA
       </Link>
-      <nav className="flex gap-6 font-label text-sm">
+
+      <nav className="flex gap-6 font-label text-sm justify-self-center">
         {links.map((link) => (
           <Link
             key={link.href}
             href={link.href}
             className={`transition-colors ${
-              esActivo(link.href) ? "text-primary" : "hover:text-primary"
+              esActivo(link.href)
+              ? "text-primary"
+              : link.href === "/ofertas"
+              ? "text-tertiary hover:text-tertiary/80"
+              : "hover:text-primary"
             }`}
           >
-            {link.label}
+        {link.label}
           </Link>
-        ))}
-      </nav>
-      <div className="flex gap-5 items-center">
+            ))}
+          </nav>
+
+      <div className="flex gap-5 items-center justify-self-end relative">
         <Link href="/carrito" className="relative">
           <ShoppingCart size={20} />
           {cantidadTotal > 0 && (
@@ -48,7 +65,36 @@ export default function Navbar() {
             </span>
           )}
         </Link>
-        <Link href="/login"><User size={20} /></Link>
+
+        {cliente ? (
+          <div className="relative">
+            <button onClick={() => setMenuAbierto((v) => !v)}>
+              <User size={20} />
+            </button>
+            {menuAbierto && (
+              <div className="absolute right-0 top-8 bg-secondary rounded-lg shadow-lg py-2 w-48 z-50">
+                <p className="px-4 py-2 text-sm text-neutral-light border-b border-white/10">
+                  Hola, {cliente.p_nombre}
+                </p>
+                <Link
+                  href="/mis-facturas"
+                  onClick={() => setMenuAbierto(false)}
+                  className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/5"
+                >
+                  <FileText size={16} /> Mis Facturas
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-primary hover:bg-white/5 w-full text-left"
+                >
+                  <LogOut size={16} /> Cerrar Sesión
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <Link href="/login"><User size={20} /></Link>
+        )}
       </div>
     </header>
   );

@@ -1,4 +1,3 @@
-// src/lib/carritoApi.ts
 import { apiFetch } from "./apiClient";
 import { Carrito } from "@/types";
 

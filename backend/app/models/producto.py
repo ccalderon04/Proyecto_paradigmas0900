@@ -50,6 +50,7 @@ class Producto(Base):
     stock: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     u_medida: Mapped[str | None] = mapped_column(String(100), nullable=True)
     precio: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    cantidad: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=True)
     estado: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     fecha_registro: Mapped[date] = mapped_column(Date, nullable=False, default=date.today)
 

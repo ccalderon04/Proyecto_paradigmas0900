@@ -1,4 +1,3 @@
-// src/app/productos/[id]/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,9 +7,11 @@ import Footer from "@/components/Footer";
 import Button from "@/components/Button";
 import { obtenerProductoPorId } from "@/lib/productosApi";
 import { useCarrito } from "@/context/carritocontext";
-import { formatMoney } from "@/lib/format";
+import { formatMoney, formatPresentacion } from "@/lib/format";
 import { Producto } from "@/types";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
+import { tieneOfertaActiva, precioConDescuento, porcentajeDescuento } from "@/lib/pricing";
+
 
 export default function DetalleProductoPage() {
     const params = useParams();
@@ -79,7 +80,24 @@ export default function DetalleProductoPage() {
                     <p className="text-neutral-light mb-6">{producto.descripcion}</p>
 
                     <p className="font-headline text-3xl font-bold text-primary mb-6">
-                        ${formatMoney(producto.precio)}
+                        {tieneOfertaActiva(producto) ? (
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className="inline-block bg-tertiary/20 text-tertiary text-xs font-label px-3 py-1 rounded-full">
+                                {porcentajeDescuento(producto)}% de descuento
+                            </span>
+                        </div>
+                        ) : null}
+
+                        <div className="flex items-baseline gap-3 mb-6">
+                            {tieneOfertaActiva(producto) && (
+                            <span className="text-neutral-light line-through text-lg">
+                        {formatMoney(producto.precio)}
+                            </span>
+                        )}
+                    <p className="font-headline text-3xl font-bold text-primary">
+                        {formatMoney(precioConDescuento(producto))}
+                    </p>
+                    </div>
                     </p>
 
                     <div className="flex items-center gap-4 mb-6">
@@ -119,8 +137,8 @@ export default function DetalleProductoPage() {
                     <p className="text-sm text-neutral-light">Producto testeado y de alta pureza.</p>
                 </div>
                 <div className="bg-secondary rounded-xl p-6 text-white">
-                    <h3 className="font-headline font-bold mb-2">Unidad de medida</h3>
-                    <p className="text-sm text-neutral-light">{producto.u_medida ?? "N/A"}</p>
+                    <h3 className="font-headline font-bold mb-2">Tamaño</h3>
+                    <p className="text-sm text-neutral-light">{formatPresentacion(producto.cantidad, producto.u_medida)}</p>
                 </div>
             </div>
             </section>

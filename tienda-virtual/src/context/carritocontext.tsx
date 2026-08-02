@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { Producto } from "@/types";
+import { precioConDescuento } from "@/lib/pricing";
 
 export interface ItemCarrito {
     producto: Producto;
@@ -69,8 +70,8 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
 
     const vaciarCarrito = () => setItems([]);
 
-    // Funciones puras para los cálculos (programación funcional)
-    const total = items.reduce((acc, item) => acc + item.producto.precio * item.cantidad, 0);
+
+    const total = items.reduce((acc, item) => acc + precioConDescuento(item.producto) * item.cantidad, 0);
     const cantidadTotal = items.reduce((acc, item) => acc + item.cantidad, 0);
 
     return (
